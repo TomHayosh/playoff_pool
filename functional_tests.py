@@ -11,6 +11,11 @@ class NewVisitorTest(unittest.TestCase):
     def tearDown(self):
         self.browser.quit()
 
+    def check_for_row_in_picks_table(self, row_text):
+        table = self.browser.find_element_by_id('id_picks')
+        rows = table.find_elements_by_tag_name('tr')
+        self.assertIn(row_text, [row.text for row in rows])
+
     def test_can_enter_a_pick_set_and_view_it_later(self):
         # After years of running the playoff pool via email and Excel
         # spreadsheets, it is now managed from the cloud.
@@ -56,12 +61,10 @@ class NewVisitorTest(unittest.TestCase):
         inputbox4.send_keys(Keys.ENTER)
         time.sleep(1)
 
-        table = self.browser.find_element_by_id('id_picks')
-        rows = table.find_elements_by_tag_name('tr')
-        self.assertIn('Game 1: 10', [row.text for row in rows])
-        self.assertIn('Game 2: 7', [row.text for row in rows])
-        self.assertIn('Game 3: 3', [row.text for row in rows])
-        self.assertIn('Game 4: -10', [row.text for row in rows])
+        self.check_for_row_in_picks_table('Game 1: 10')
+        self.check_for_row_in_picks_table('Game 2: 7')
+        self.check_for_row_in_picks_table('Game 3: 3')
+        self.check_for_row_in_picks_table('Game 4: -10')
 
         # He changes his mind and decides the visitors will win game 3
         inputbox3 = self.browser.find_element_by_id('game_3')
@@ -71,13 +74,10 @@ class NewVisitorTest(unittest.TestCase):
 
         # The page updates again, and now shows the new pick for game 3
         # along with the previous picks for the other games
-        table = self.browser.find_element_by_id('id_picks')
-        rows = table.find_elements_by_tag_name('tr')
-        self.assertIn('Game 1: 10', [row.text for row in rows])
-        self.assertIn('Game 2: 7', [row.text for row in rows])
-        self.assertIn('Game 3: -3', [row.text for row in rows])
-        self.assertIn('Game 4: -10', [row.text for row in rows])
-
+        self.check_for_row_in_picks_table('Game 1: 10')
+        self.check_for_row_in_picks_table('Game 2: 7')
+        self.check_for_row_in_picks_table('Game 3: -33')
+        self.check_for_row_in_picks_table('Game 4: -10')
 
         # Chuck sees that the site has generated a unique URL for him.
 
