@@ -1,4 +1,5 @@
 from django.test import TestCase
+from pool.models import PickSet
 
 
 # Create your tests here.
@@ -12,3 +13,21 @@ class HomePageTest(TestCase):
         response = self.client.post('/', data={'game_1_pick': '24'})
         self.assertIn('24', response.content.decode())
         self.assertTemplateUsed(response, 'home.html')
+
+
+class PickSetModelTest(TestCase):
+
+    def test_saving_and_retrieving_picks(self):
+        pick_set = PickSet()
+        pick_set.round_1_game_1 = 10
+        pick_set.round_1_game_2 = 7
+        pick_set.round_1_game_3 = 3
+        pick_set.round_1_game_4 = -10
+        pick_set.save()
+        self.assertEqual(pick_set.round_1_game_3, 3)
+
+        pick_set.round_1_game_3 = -3
+        pick_set.save()
+        all_pick_sets = PickSet.objects.all()
+        self.assertEqual(all_pick_sets.count(), 1)
+        self.assertEqual(all_pick_sets[0].round_1_game_3, -3)
