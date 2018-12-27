@@ -1,4 +1,6 @@
 from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+import time
 import unittest
 
 
@@ -18,13 +20,48 @@ class NewVisitorTest(unittest.TestCase):
 
         # He notices the page title and header mention the NFL Playoff Pool.
         self.assertIn('2019 NFL Playoff Pool', self.browser.title)
+        header_text = self.browser.find_element_by_tag_name('h1').text
+        self.assertIn('2019 NFL Playoff Pool', header_text)
 
         # He is able to create a new pick set for the first round of
         # four games.
+        inputbox1 = self.browser.find_element_by_id('game_1_pick')
+        self.assertEqual(
+            inputbox1.get_attribute('placeholder'),
+            'a'
+        )
+        inputbox2 = self.browser.find_element_by_id('game_2_pick')
+        self.assertEqual(
+            inputbox2.get_attribute('placeholder'),
+            'b'
+        )
+        inputbox3 = self.browser.find_element_by_id('game_3_pick')
+        self.assertEqual(
+            inputbox3.get_attribute('placeholder'),
+            'c'
+        )
+        inputbox4 = self.browser.find_element_by_id('game_4_pick')
+        self.assertEqual(
+            inputbox4.get_attribute('placeholder'),
+            'd'
+        )
 
-        # He picks the home team by 21 in all four games.
+        # He picks home team by 10, 7, 3, then visiting by 10.
+        inputbox1.send_keys('10')
+        inputbox2.send_keys('7')
+        inputbox3.send_keys('3')
+        inputbox4.send_keys('-10')
 
         # When he hits enter, the page updates and shows the entered picks.
+        inputbox4.send_keys(Keys.ENTER)
+        time.sleep(1)
+
+        table = self.browser.find_element_by_id('id_picks')
+        rows = table.find_elements_by_tag_name('tr')
+        self.assertTrue(any(row.text == 'Game 1: 10' for row in rows))
+        self.assertTrue(any(row.text == 'Game 2: 7' for row in rows))
+        self.assertTrue(any(row.text == 'Game 3: 13' for row in rows))
+        self.assertTrue(any(row.text == 'Game 4: -10' for row in rows))
 
         # Chuck sees that the site has generated a unique URL for him.
 
