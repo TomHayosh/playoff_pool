@@ -17,7 +17,7 @@ class NewVisitorTest(unittest.TestCase):
         self.browser.get('http://localhost:8000')
 
         # He notices the page title and header mention the NFL Playoff Pool.
-        self.assertIn('NFL Playoff Pool', self.browser.title)
+        self.assertIn('2019 NFL Playoff Pool', self.browser.title)
 
         # He is able to create a new pick set for the first round of
         # four games.
@@ -29,7 +29,7 @@ class NewVisitorTest(unittest.TestCase):
         # Chuck sees that the site has generated a unique URL for him.
 
         # He visits that URL again and sees his picks are still there.
-        self.fail('Finish the test!')
+        # self.fail('Finish the test!')
 
 
 if __name__ == '__main__':
