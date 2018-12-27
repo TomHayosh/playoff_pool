@@ -5,11 +5,28 @@
   <body>
     <h1>2019 NFL Playoff Pool</h1>
     <h2>Your picks</h2>
-    <input id="game_1_pick" placeholder="a"/>
-    <input id="game_2_pick" placeholder="b"/>
-    <input id="game_3_pick" placeholder="c"/>
-    <input id="game_4_pick" placeholder="d"/>
+    <form method="POST">
+      <input id="game_1" name="game_1_pick" placeholder="a"/>
+      <input id="game_2" name="game_2_pick" placeholder="b"/>
+      <input id="game_3" name="game_3_pick" placeholder="c"/>
+      <input id="game_4" name="game_4_pick" placeholder="d"/>
+      <input type="submit"/>
+    {% csrf_token %}
+    </form>
+
     <table id="id_picks">
+      <tr>
+        <td>Game 1: {{ new_game_1_pick }}</td>
+      </tr>
+      <tr>
+        <td>Game 2: {{ new_game_2_pick }}</td>
+      </tr>
+      <tr>
+        <td>Game 3: {{ new_game_3_pick }}</td>
+      </tr>
+      <tr>
+        <td>Game 4: {{ new_game_4_pick }}</td>
+      </tr>
     </table>
   </body>
 </html>

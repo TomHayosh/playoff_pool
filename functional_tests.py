@@ -25,22 +25,22 @@ class NewVisitorTest(unittest.TestCase):
 
         # He is able to create a new pick set for the first round of
         # four games.
-        inputbox1 = self.browser.find_element_by_id('game_1_pick')
+        inputbox1 = self.browser.find_element_by_id('game_1')
         self.assertEqual(
             inputbox1.get_attribute('placeholder'),
             'a'
         )
-        inputbox2 = self.browser.find_element_by_id('game_2_pick')
+        inputbox2 = self.browser.find_element_by_id('game_2')
         self.assertEqual(
             inputbox2.get_attribute('placeholder'),
             'b'
         )
-        inputbox3 = self.browser.find_element_by_id('game_3_pick')
+        inputbox3 = self.browser.find_element_by_id('game_3')
         self.assertEqual(
             inputbox3.get_attribute('placeholder'),
             'c'
         )
-        inputbox4 = self.browser.find_element_by_id('game_4_pick')
+        inputbox4 = self.browser.find_element_by_id('game_4')
         self.assertEqual(
             inputbox4.get_attribute('placeholder'),
             'd'
@@ -58,10 +58,26 @@ class NewVisitorTest(unittest.TestCase):
 
         table = self.browser.find_element_by_id('id_picks')
         rows = table.find_elements_by_tag_name('tr')
-        self.assertTrue(any(row.text == 'Game 1: 10' for row in rows))
-        self.assertTrue(any(row.text == 'Game 2: 7' for row in rows))
-        self.assertTrue(any(row.text == 'Game 3: 13' for row in rows))
-        self.assertTrue(any(row.text == 'Game 4: -10' for row in rows))
+        self.assertIn('Game 1: 10', [row.text for row in rows])
+        self.assertIn('Game 2: 7', [row.text for row in rows])
+        self.assertIn('Game 3: 3', [row.text for row in rows])
+        self.assertIn('Game 4: -10', [row.text for row in rows])
+
+        # He changes his mind and decides the visitors will win game 3
+        inputbox3 = self.browser.find_element_by_id('game_3')
+        inputbox3.send_keys('-3')
+        inputbox3.send_keys(Keys.ENTER)
+        time.sleep(1)
+
+        # The page updates again, and now shows the new pick for game 3
+        # along with the previous picks for the other games
+        table = self.browser.find_element_by_id('id_picks')
+        rows = table.find_elements_by_tag_name('tr')
+        self.assertIn('Game 1: 10', [row.text for row in rows])
+        self.assertIn('Game 2: 7', [row.text for row in rows])
+        self.assertIn('Game 3: -3', [row.text for row in rows])
+        self.assertIn('Game 4: -10', [row.text for row in rows])
+
 
         # Chuck sees that the site has generated a unique URL for him.
 
