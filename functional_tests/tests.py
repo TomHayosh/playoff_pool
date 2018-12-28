@@ -1,10 +1,11 @@
+from django.test import LiveServerTestCase
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import time
-import unittest
 
 
-class NewVisitorTest(unittest.TestCase):
+class NewVisitorTest(LiveServerTestCase):
+
     def setUp(self):
         self.browser = webdriver.Firefox()
 
@@ -21,7 +22,7 @@ class NewVisitorTest(unittest.TestCase):
         # spreadsheets, it is now managed from the cloud.
 
         # Chuck goes to check out its homepage.
-        self.browser.get('http://localhost:8000')
+        self.browser.get(self.live_server_url)
         # self.browser.get('http://tomhayosh.pythonanywhere.com/')
 
         # He notices the page title and header mention the NFL Playoff Pool.
@@ -84,7 +85,3 @@ class NewVisitorTest(unittest.TestCase):
 
         # He visits that URL again and sees his picks are still there.
         # self.fail('Finish the test!')
-
-
-if __name__ == '__main__':
-    unittest.main(warnings='ignore')
