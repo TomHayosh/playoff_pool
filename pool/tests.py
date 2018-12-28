@@ -9,31 +9,6 @@ class HomePageTest(TestCase):
         response = self.client.get('/')
         self.assertTemplateUsed(response, 'home.html')
 
-    def test_can_save_a_POST_request_for_round_1(self):
-        data = {}
-        data['game_1_pick'] = 24
-        data['game_2_pick'] = 10
-        data['game_3_pick'] = -14
-        data['game_4_pick'] = 13
-        self.client.post('/', data)
-
-        self.assertEqual(PickSet.objects.count(), 1)
-        new_pick_set = PickSet.objects.first()
-        self.assertEqual(new_pick_set.round_1_game_1, 24)
-        self.assertEqual(new_pick_set.round_1_game_2, 10)
-        self.assertEqual(new_pick_set.round_1_game_3, -14)
-        self.assertEqual(new_pick_set.round_1_game_4, 13)
-
-    def test_redirects_after_POST(self):
-        data = {}
-        data['game_1_pick'] = 24
-        data['game_2_pick'] = 10
-        data['game_3_pick'] = -14
-        data['game_4_pick'] = 13
-        response = self.client.post('/', data)
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['location'], '/picks/only-picks')
-
     def test_only_saves_when_necessary(self):
         self.client.get('/')
         self.assertEqual(PickSet.objects.count(), 0)
@@ -42,7 +17,7 @@ class HomePageTest(TestCase):
 class ListViewTest(TestCase):
 
     def test_uses_picks_template(self):
-        response = self.client.get('/picks/only-picks')
+        response = self.client.get('/picks/only-picks/')
         self.assertTemplateUsed(response, 'picks.html')
 
     def test_displays_all_picks(self):
@@ -59,10 +34,34 @@ class ListViewTest(TestCase):
             round_1_game_4=-7,
         )
 
-        response = self.client.get('/picks/only-picks')
+        response = self.client.get('/picks/only-picks/')
 
         self.assertContains(response, '3')
         # self.assertContains(response, '7')
+
+
+class NewPicksTest(TestCase):
+
+    def test_can_save_a_POST_request(self):
+        data = {}
+        data['game_1_pick'] = 24
+        data['game_2_pick'] = 10
+        data['game_3_pick'] = -14
+        data['game_4_pick'] = 13
+        self.client.post('/picks/new', data)
+        self.assertEqual(PickSet.objects.count(), 1)
+        pick_set = PickSet.objects.first()
+        self.assertEqual(pick_set.round_1_game_3, -14)
+
+    def test_redirects_after_POST(self):
+        data = {}
+        data['game_1_pick'] = 24
+        data['game_2_pick'] = 10
+        data['game_3_pick'] = -14
+        data['game_4_pick'] = 13
+        response = self.client.post('/picks/new', data)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['location'], '/picks/only-picks/')
 
 
 class PickSetModelTest(TestCase):
