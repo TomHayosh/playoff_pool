@@ -17,27 +17,28 @@ class HomePageTest(TestCase):
 class ListViewTest(TestCase):
 
     def test_uses_picks_template(self):
-        response = self.client.get('/picks/only-picks/')
+        pick_set = PickSet.objects.create()
+        response = self.client.get(f'/picks/{pick_set.id}/')
         self.assertTemplateUsed(response, 'picks.html')
 
     def test_displays_all_picks(self):
-        PickSet.objects.create(
+        correct_set = PickSet.objects.create(
             round_1_game_1=3,
             round_1_game_2=3,
             round_1_game_3=3,
             round_1_game_4=3,
         )
-        PickSet.objects.create(
+        other_set = PickSet.objects.create(
             round_1_game_1=-7,
             round_1_game_2=-7,
             round_1_game_3=-7,
             round_1_game_4=-7,
         )
 
-        response = self.client.get('/picks/only-picks/')
-
+        response = self.client.get(f'/picks/{correct_set.id}/')
         self.assertContains(response, '3')
-        # self.assertContains(response, '7')
+        response = self.client.get(f'/picks/{other_set.id}/')
+        self.assertContains(response, '7')
 
 
 class NewPicksTest(TestCase):
@@ -60,8 +61,9 @@ class NewPicksTest(TestCase):
         data['game_3_pick'] = -14
         data['game_4_pick'] = 13
         response = self.client.post('/picks/new', data)
+        new_pick_set = PickSet.objects.first()
         self.assertEqual(response.status_code, 302)
-        self.assertEqual(response['location'], '/picks/only-picks/')
+        self.assertEqual(response['location'], f'/picks/{new_pick_set.id}/')
 
 
 class PickSetModelTest(TestCase):
