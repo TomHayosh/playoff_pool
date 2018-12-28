@@ -1,5 +1,4 @@
 from django.shortcuts import render
-from django.http import HttpResponse
 from pool.models import PickSet
 
 
@@ -13,8 +12,8 @@ def home_page(request):
     pick_set.save()
 
     return render(request, 'home.html', {
-        'new_game_1_pick': request.POST.get('game_1_pick', ''),
-        'new_game_2_pick': request.POST.get('game_2_pick', ''),
-        'new_game_3_pick': request.POST.get('game_3_pick', ''),
-        'new_game_4_pick': request.POST.get('game_4_pick', ''),
+        'new_game_1_pick': pick_set.round_1_game_1,
+        'new_game_2_pick': pick_set.round_1_game_2,
+        'new_game_3_pick': pick_set.round_1_game_3,
+        'new_game_4_pick': pick_set.round_1_game_4,
     })
