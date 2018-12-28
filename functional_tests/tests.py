@@ -118,7 +118,7 @@ class NewVisitorTest(LiveServerTestCase):
 
         # # Use a new browser session for the next user
         self.browser.quit()
-        self.browser.webdriver.Firefox()
+        self.browser = webdriver.Firefox()
 
         # Mike visits the home page and enters picks
         self.browser.get(self.live_server_url)
@@ -135,6 +135,10 @@ class NewVisitorTest(LiveServerTestCase):
         inputbox2.send_keys('-14')
         inputbox3.send_keys('1')
         inputbox4.send_keys('27')
+
+        # When he hits enter, the page updates and shows the entered picks.
+        inputbox4.send_keys(Keys.ENTER)
+        time.sleep(1)
 
         mike_picks_url = self.browser.current_url
         self.assertRegex(mike_picks_url, '/picks/.+')

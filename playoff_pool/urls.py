@@ -19,5 +19,6 @@ from pool import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', views.home_page, name='home')
+    path('', views.home_page, name='home'),
+    path('picks/only-picks', views.view_picks, name='view_picks'),
 ]

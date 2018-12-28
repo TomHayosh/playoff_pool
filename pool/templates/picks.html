@@ -13,5 +13,20 @@
       <input type="submit"/>
     {% csrf_token %}
     </form>
+
+    <table id="id_picks">
+      <tr>
+        <td>Game 1: {{ new_game_1_pick }}</td>
+      </tr>
+      <tr>
+        <td>Game 2: {{ new_game_2_pick }}</td>
+      </tr>
+      <tr>
+        <td>Game 3: {{ new_game_3_pick }}</td>
+      </tr>
+      <tr>
+        <td>Game 4: {{ new_game_4_pick }}</td>
+      </tr>
+    </table>
   </body>
 </html>

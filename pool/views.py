@@ -18,6 +18,19 @@ def home_page(request):
             round_1_game_3=temp_round_1_game_3[0],
             round_1_game_4=temp_round_1_game_4[0],
         )
-        return redirect('/')
+        return redirect('/picks/only-picks')
 
     return render(request, 'home.html')
+
+
+def view_picks(request):
+    template_to_use = 'picks.html'
+    pick_set = PickSet.objects.first()
+    if pick_set is None:
+        return render(request, template_to_use)
+    return render(request, template_to_use, {
+        'new_game_1_pick': pick_set.round_1_game_1,
+        'new_game_2_pick': pick_set.round_1_game_2,
+        'new_game_3_pick': pick_set.round_1_game_3,
+        'new_game_4_pick': pick_set.round_1_game_4,
+    })
