@@ -15,7 +15,7 @@ class HomePageTest(TestCase):
         data['game_2_pick'] = 10
         data['game_3_pick'] = -14
         data['game_4_pick'] = 13
-        response = self.client.post('/', data)
+        self.client.post('/', data)
 
         self.assertEqual(PickSet.objects.count(), 1)
         new_pick_set = PickSet.objects.first()
@@ -24,8 +24,15 @@ class HomePageTest(TestCase):
         self.assertEqual(new_pick_set.round_1_game_3, -14)
         self.assertEqual(new_pick_set.round_1_game_4, 13)
 
-        self.assertIn('24', response.content.decode())
-        self.assertTemplateUsed(response, 'home.html')
+    def test_redirects_after_POST(self):
+        data = {}
+        data['game_1_pick'] = 24
+        data['game_2_pick'] = 10
+        data['game_3_pick'] = -14
+        data['game_4_pick'] = 13
+        response = self.client.post('/', data)
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response['location'], '/')
 
     def test_only_saves_when_necessary(self):
         self.client.get('/')

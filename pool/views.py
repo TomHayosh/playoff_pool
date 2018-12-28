@@ -1,13 +1,9 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from pool.models import PickSet
 
 
 # Create your views here.
 def home_page(request):
-    new_round_1_game_1 = 0
-    new_round_1_game_2 = 0
-    new_round_1_game_3 = 0
-    new_round_1_game_4 = 0
 
     if request.method == 'POST':
         # Selecting by [0] here gives the first char of '24' from ('24',)
@@ -22,14 +18,6 @@ def home_page(request):
             round_1_game_3=temp_round_1_game_3[0],
             round_1_game_4=temp_round_1_game_4[0],
         )
-        new_round_1_game_1 = int(temp_round_1_game_1[0])
-        new_round_1_game_2 = int(temp_round_1_game_2[0])
-        new_round_1_game_3 = int(temp_round_1_game_3[0])
-        new_round_1_game_4 = int(temp_round_1_game_4[0])
+        return redirect('/')
 
-    return render(request, 'home.html', {
-        'new_game_1_pick': new_round_1_game_1,
-        'new_game_2_pick': new_round_1_game_2,
-        'new_game_3_pick': new_round_1_game_3,
-        'new_game_4_pick': new_round_1_game_4,
-    })
+    return render(request, 'home.html')
