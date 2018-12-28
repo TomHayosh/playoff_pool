@@ -22,6 +22,7 @@ class NewVisitorTest(unittest.TestCase):
 
         # Chuck goes to check out its homepage.
         self.browser.get('http://localhost:8000')
+        # self.browser.get('http://tomhayosh.pythonanywhere.com/')
 
         # He notices the page title and header mention the NFL Playoff Pool.
         self.assertIn('2019 NFL Playoff Pool', self.browser.title)
@@ -76,7 +77,7 @@ class NewVisitorTest(unittest.TestCase):
         # along with the previous picks for the other games
         self.check_for_row_in_picks_table('Game 1: 10')
         self.check_for_row_in_picks_table('Game 2: 7')
-        self.check_for_row_in_picks_table('Game 3: -33')
+        self.check_for_row_in_picks_table('Game 3: -3')
         self.check_for_row_in_picks_table('Game 4: -10')
 
         # Chuck sees that the site has generated a unique URL for him.

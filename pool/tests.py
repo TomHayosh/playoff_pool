@@ -9,15 +9,27 @@ class HomePageTest(TestCase):
         response = self.client.get('/')
         self.assertTemplateUsed(response, 'home.html')
 
-    def test_can_save_a_POST_request(self):
-        response = self.client.post('/', data={'game_1_pick': '24'})
+    def test_can_save_a_POST_request_for_round_1(self):
+        data = {}
+        data['game_1_pick'] = 24
+        data['game_2_pick'] = 10
+        data['game_3_pick'] = -14
+        data['game_4_pick'] = 13
+        response = self.client.post('/', data)
 
         self.assertEqual(PickSet.objects.count(), 1)
         new_pick_set = PickSet.objects.first()
         self.assertEqual(new_pick_set.round_1_game_1, 24)
+        self.assertEqual(new_pick_set.round_1_game_2, 10)
+        self.assertEqual(new_pick_set.round_1_game_3, -14)
+        self.assertEqual(new_pick_set.round_1_game_4, 13)
 
         self.assertIn('24', response.content.decode())
         self.assertTemplateUsed(response, 'home.html')
+
+    def test_only_saves_when_necessary(self):
+        self.client.get('/')
+        self.assertEqual(PickSet.objects.count(), 0)
 
 
 class PickSetModelTest(TestCase):
