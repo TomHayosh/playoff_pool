@@ -11,6 +11,11 @@ class HomePageTest(TestCase):
 
     def test_can_save_a_POST_request(self):
         response = self.client.post('/', data={'game_1_pick': '24'})
+
+        self.assertEqual(PickSet.objects.count(), 1)
+        new_pick_set = PickSet.objects.first()
+        self.assertEqual(new_pick_set.round_1_game_1, 24)
+
         self.assertIn('24', response.content.decode())
         self.assertTemplateUsed(response, 'home.html')
 
