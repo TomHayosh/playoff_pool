@@ -84,6 +84,9 @@ class NewVisitorTest(LiveServerTestCase):
         self.wait_for_row_in_picks_table('Game 4: -10')
 
         # He changes his mind and decides the visitors will win game 3
+        editbutton = self.browser.find_element_by_id('edit_picks')
+        editbutton.send_keys(Keys.ENTER)
+        time.sleep(1)
         inputbox3 = self.browser.find_element_by_id('game_3')
         inputbox3.clear()
         inputbox3.send_keys('-3')
@@ -106,6 +109,9 @@ class NewVisitorTest(LiveServerTestCase):
 
         # Later Chuck makes his pick for the second game, and sees that
         # his first pick is still there
+        editbutton = self.browser.find_element_by_id('edit_picks')
+        editbutton.send_keys(Keys.ENTER)
+        time.sleep(1)
         inputbox2 = self.browser.find_element_by_id('game_2')
         inputbox2.send_keys('3')
         inputbox2.send_keys(Keys.ENTER)

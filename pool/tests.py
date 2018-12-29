@@ -71,6 +71,14 @@ class PicksViewTest(TestCase):
         self.assertEqual(response.context['pick_set'], correct_set)
 
 
+class EditPicksViewTest(TestCase):
+
+    def test_uses_edit_template(self):
+        pick_set = PickSet.objects.create()
+        response = self.client.get(f'/picks/{pick_set.id}/edit/')
+        self.assertTemplateUsed(response, 'edit.html')
+
+
 class NewPicksTest(TestCase):
 
     def test_can_save_a_POST_request(self):

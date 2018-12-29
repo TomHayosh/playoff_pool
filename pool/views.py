@@ -44,6 +44,11 @@ def new_picks(request):
     return redirect(f'/picks/{pick_set.id}/')
 
 
+def edit_picks(request, pick_set_id):
+    pick_set = PickSet.objects.get(id=pick_set_id)
+    return render(request, 'edit.html', {'pick_set': pick_set})
+
+
 def update_picks(request, pick_set_id):
     pick_set = PickSet.objects.get(id=pick_set_id)
     try:
