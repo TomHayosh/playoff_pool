@@ -22,4 +22,6 @@ urlpatterns = [
     path('', views.home_page, name='home'),
     path('picks/new', views.new_picks, name='new_picks'),
     path('picks/<int:pick_set_id>/', views.view_picks, name='view_picks'),
+    path('picks/<int:pick_set_id>/update_picks', views.update_picks,
+         name='update_picks'),
 ]

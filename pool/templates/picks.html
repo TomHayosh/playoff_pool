@@ -5,7 +5,7 @@
   <body>
     <h1>2019 NFL Playoff Pool</h1>
     <h2>Your picks</h2>
-    <form method="POST" action="/picks/new">
+    <form method="POST" action="/picks/{{ pick_set.id }}/update_picks">
       <input id="game_1" name="game_1_pick" placeholder="a"/>
       <input id="game_2" name="game_2_pick" placeholder="b"/>
       <input id="game_3" name="game_3_pick" placeholder="c"/>
@@ -16,16 +16,16 @@
 
     <table id="id_picks">
       <tr>
-        <td>Game 1: {{ new_game_1_pick }}</td>
+        <td>Game 1: {{ pick_set.round_1_game_1 }}</td>
       </tr>
       <tr>
-        <td>Game 2: {{ new_game_2_pick }}</td>
+        <td>Game 2: {{ pick_set.round_1_game_2 }}</td>
       </tr>
       <tr>
-        <td>Game 3: {{ new_game_3_pick }}</td>
+        <td>Game 3: {{ pick_set.round_1_game_3 }}</td>
       </tr>
       <tr>
-        <td>Game 4: {{ new_game_4_pick }}</td>
+        <td>Game 4: {{ pick_set.round_1_game_4 }}</td>
       </tr>
     </table>
   </body>
