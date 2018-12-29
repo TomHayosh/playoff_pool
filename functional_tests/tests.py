@@ -1,6 +1,7 @@
 from django.test import LiveServerTestCase
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
+from selenium.webdriver.common.touch_actions import TouchActions
 from selenium.webdriver.common.keys import Keys
 import time
 
@@ -22,6 +23,18 @@ class NewVisitorTest(LiveServerTestCase):
                 table = self.browser.find_element_by_id('id_picks')
                 rows = table.find_elements_by_tag_name('tr')
                 self.assertIn(row_text, [row.text for row in rows])
+                return
+            except (AssertionError, WebDriverException) as e:
+                if time.time() - start_time > MAX_WAIT:
+                    raise e
+                time.sleep(0.5)
+
+    def wait_for_entry_in_input_box(self, input_id, input_value):
+        start_time = time.time()
+        while True:
+            try:
+                inputbox = self.browser.find_element_by_id(input_id)
+                self.assertEqual(inputbox.get_attribute('value'), input_value)
                 return
             except (AssertionError, WebDriverException) as e:
                 if time.time() - start_time > MAX_WAIT:
@@ -78,22 +91,25 @@ class NewVisitorTest(LiveServerTestCase):
         # When he hits enter, the page updates and shows the entered picks.
         inputbox4.send_keys(Keys.ENTER)
 
-        self.wait_for_row_in_picks_table('Game 1: 10')
-        self.wait_for_row_in_picks_table('Game 2: 7')
-        self.wait_for_row_in_picks_table('Game 3: 3')
-        self.wait_for_row_in_picks_table('Game 4: -10')
+        self.wait_for_entry_in_input_box('game_1', '10')
+        self.wait_for_entry_in_input_box('game_2', '7')
+        self.wait_for_entry_in_input_box('game_3', '3')
+        self.wait_for_entry_in_input_box('game_4', '-10')
 
         # He changes his mind and decides the visitors will win game 3
         inputbox3 = self.browser.find_element_by_id('game_3')
+        # touchactions = TouchActions(inputbox3)
+        # touchactions.doubleTap(inputbox3)
         inputbox3.send_keys('-3')
         inputbox3.send_keys(Keys.ENTER)
+        # time.sleep(3)
 
         # The page updates again, and now shows the new pick for game 3
         # along with the previous picks for the other games
-        # self.wait_for_row_in_picks_table('Game 1: 10')
-        # self.wait_for_row_in_picks_table('Game 2: 7')
-        # self.wait_for_row_in_picks_table('Game 3: -3')
-        # self.wait_for_row_in_picks_table('Game 4: -10')
+        # self.wait_for_entry_in_input_box('game_1', '10')
+        # self.wait_for_entry_in_input_box('game_2', '7')
+        # self.wait_for_entry_in_input_box('game_3', '-3')
+        # self.wait_for_entry_in_input_box('game_4', '-10')
 
     def test_user_can_submit_partial_pick_set(self):
         # Chuck knows what he wants for the first game
