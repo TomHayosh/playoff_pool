@@ -77,25 +77,39 @@ class NewVisitorTest(LiveServerTestCase):
 
         # When he hits enter, the page updates and shows the entered picks.
         inputbox4.send_keys(Keys.ENTER)
-        time.sleep(1)
 
-        # self.check_for_row_in_picks_table('Game 1: 10')
-        # self.check_for_row_in_picks_table('Game 2: 7')
-        # self.check_for_row_in_picks_table('Game 3: 3')
-        # self.check_for_row_in_picks_table('Game 4: -10')
+        self.wait_for_row_in_picks_table('Game 1: 10')
+        self.wait_for_row_in_picks_table('Game 2: 7')
+        self.wait_for_row_in_picks_table('Game 3: 3')
+        self.wait_for_row_in_picks_table('Game 4: -10')
 
         # He changes his mind and decides the visitors will win game 3
         inputbox3 = self.browser.find_element_by_id('game_3')
         inputbox3.send_keys('-3')
         inputbox3.send_keys(Keys.ENTER)
-        time.sleep(1)
 
         # The page updates again, and now shows the new pick for game 3
         # along with the previous picks for the other games
-        # self.check_for_row_in_picks_table('Game 1: 10')
-        # self.check_for_row_in_picks_table('Game 2: 7')
-        # self.check_for_row_in_picks_table('Game 3: -3')
-        # self.check_for_row_in_picks_table('Game 4: -10')
+        # self.wait_for_row_in_picks_table('Game 1: 10')
+        # self.wait_for_row_in_picks_table('Game 2: 7')
+        # self.wait_for_row_in_picks_table('Game 3: -3')
+        # self.wait_for_row_in_picks_table('Game 4: -10')
+
+    def test_user_can_submit_partial_pick_set(self):
+        # Chuck knows what he wants for the first game
+        self.browser.get(self.live_server_url)
+        inputbox1 = self.browser.find_element_by_id('game_1')
+        inputbox1.send_keys('7')
+        inputbox1.send_keys(Keys.ENTER)
+        self.wait_for_row_in_picks_table('Game 1: 7')
+
+        # Later Chuck makes his pick for the second game, and sees that
+        # his first pick is still there
+        inputbox2 = self.browser.find_element_by_id('game_2')
+        inputbox2.send_keys('3')
+        inputbox2.send_keys(Keys.ENTER)
+        self.wait_for_row_in_picks_table('Game 2: 3')
+        self.wait_for_row_in_picks_table('Game 1: 7')
 
     def test_multiple_users_can_enter_picks_at_different_urls(self):
         # Chuck sees that the site has generated a unique URL for him.
