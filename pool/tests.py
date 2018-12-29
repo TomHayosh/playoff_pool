@@ -1,5 +1,6 @@
 from django.test import TestCase
 from pool.models import PickSet
+import time
 
 
 # Create your tests here.
@@ -54,7 +55,7 @@ class PicksViewTest(TestCase):
         self.assertContains(response, '-3')
         self.assertContains(response, '-14')
 
-    def test_passses_correct_list_to_template(self):
+    def test_passses_correct_pick_set_to_template(self):
         correct_set = PickSet.objects.create(
             round_1_game_1=3,
             round_1_game_2=3,
@@ -70,13 +71,59 @@ class PicksViewTest(TestCase):
         response = self.client.get(f'/picks/{correct_set.id}/')
         self.assertEqual(response.context['pick_set'], correct_set)
 
+    def test_cannot_edit_after_games_start(self):
+        start_time = time.time()
+        # Need to set the expiration time as start_time + 5 seconds
+        pick_set = PickSet.objects.create(
+            round_1_game_1=-7,
+            round_1_game_2=-10,
+            round_1_game_3=-3,
+            round_1_game_4=-14,
+        )
 
-class EditPicksViewTest(TestCase):
+        response = self.client.get(f'/picks/{pick_set.id}/')
+        self.assertContains(response, 'edit_picks')
+        time.sleep(3)
+        response = self.client.get(f'/picks/{pick_set.id}/')
+        self.assertNotContains(response, 'edit_picks')
+
+
+class PicksEditTest(TestCase):
 
     def test_uses_edit_template(self):
         pick_set = PickSet.objects.create()
         response = self.client.get(f'/picks/{pick_set.id}/edit/')
         self.assertTemplateUsed(response, 'edit.html')
+
+    def test_passes_correct_pick_set_template(self):
+        pick_set = PickSet.objects.create(
+            round_1_game_1=3,
+            round_1_game_2=3,
+            round_1_game_3=3,
+            round_1_game_4=3,
+        )
+        response = self.client.get(f'/picks/{pick_set.id}/edit/')
+        self.assertContains(response, '<input')
+        time.sleep(3)
+        response = self.client.get(f'/picks/{pick_set.id}/edit/')
+        self.assertNotContains(response, '<input')
+        self.assertContains(response, 'Game picks are locked.')
+
+    def test_cannot_edit_after_games_start(self):
+        start_time = time.time()
+        # Need to set the expiration time as start_time + 5 seconds
+        other_set = PickSet.objects.create(
+            round_1_game_1=-7,
+            round_1_game_2=-10,
+            round_1_game_3=-3,
+            round_1_game_4=-14,
+        )
+
+        response = self.client.get(f'/picks/{other_set.id}/')
+        self.assertContains(response, 'edit_picks')
+        time.sleep(5)
+        response = self.client.get(f'/picks/{other_set.id}/')
+        self.assertNotContains(response, 'edit_picks')
 
 
 class NewPicksTest(TestCase):
