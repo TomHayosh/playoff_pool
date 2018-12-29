@@ -85,15 +85,16 @@ class NewVisitorTest(LiveServerTestCase):
 
         # He changes his mind and decides the visitors will win game 3
         inputbox3 = self.browser.find_element_by_id('game_3')
+        inputbox3.clear()
         inputbox3.send_keys('-3')
         inputbox3.send_keys(Keys.ENTER)
 
         # The page updates again, and now shows the new pick for game 3
         # along with the previous picks for the other games
-        # self.wait_for_row_in_picks_table('Game 1: 10')
-        # self.wait_for_row_in_picks_table('Game 2: 7')
-        # self.wait_for_row_in_picks_table('Game 3: -3')
-        # self.wait_for_row_in_picks_table('Game 4: -10')
+        self.wait_for_row_in_picks_table('Game 1: 10')
+        self.wait_for_row_in_picks_table('Game 2: 7')
+        self.wait_for_row_in_picks_table('Game 3: -3')
+        self.wait_for_row_in_picks_table('Game 4: -10')
 
     def test_user_can_submit_partial_pick_set(self):
         # Chuck knows what he wants for the first game
