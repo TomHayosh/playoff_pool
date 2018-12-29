@@ -18,31 +18,49 @@ def view_picks(request, pick_set_id):
 
 
 def new_picks(request):
-    # Selecting by [0] here gives the first char of '24' from ('24',)
-    temp_round_1_game_1 = request.POST['game_1_pick'],
-    temp_round_1_game_2 = request.POST['game_2_pick'],
-    temp_round_1_game_3 = request.POST['game_3_pick'],
-    temp_round_1_game_4 = request.POST['game_4_pick'],
+    # FIXME: The 0 default values should be specified elsewhere and read in.
+    try:
+        temp_round_1_game_1 = int(request.POST['game_1_pick'])
+    except (KeyError, ValueError):
+        temp_round_1_game_1 = 0
+    try:
+        temp_round_1_game_2 = int(request.POST['game_2_pick'])
+    except (KeyError, ValueError):
+        temp_round_1_game_2 = 0
+    try:
+        temp_round_1_game_3 = int(request.POST['game_3_pick'])
+    except (KeyError, ValueError):
+        temp_round_1_game_3 = 0
+    try:
+        temp_round_1_game_4 = int(request.POST['game_4_pick'])
+    except (KeyError, ValueError):
+        temp_round_1_game_4 = 0
     pick_set = PickSet.objects.create(
-        # Selecting by [0] here gives the integer 24. Weird.
-        round_1_game_1=temp_round_1_game_1[0],
-        round_1_game_2=temp_round_1_game_2[0],
-        round_1_game_3=temp_round_1_game_3[0],
-        round_1_game_4=temp_round_1_game_4[0],
+        round_1_game_1=temp_round_1_game_1,
+        round_1_game_2=temp_round_1_game_2,
+        round_1_game_3=temp_round_1_game_3,
+        round_1_game_4=temp_round_1_game_4,
     )
     return redirect(f'/picks/{pick_set.id}/')
 
 
 def update_picks(request, pick_set_id):
     pick_set = PickSet.objects.get(id=pick_set_id)
-    # Selecting by [0] here gives the first char of '24' from ('24',)
-    temp_round_1_game_1 = request.POST['game_1_pick'],
-    temp_round_1_game_2 = request.POST['game_2_pick'],
-    temp_round_1_game_3 = request.POST['game_3_pick'],
-    temp_round_1_game_4 = request.POST['game_4_pick'],
-    pick_set.round_1_game_1 = temp_round_1_game_1[0]
-    pick_set.round_1_game_2 = temp_round_1_game_2[0]
-    pick_set.round_1_game_3 = temp_round_1_game_3[0]
-    pick_set.round_1_game_4 = temp_round_1_game_4[0]
+    try:
+        pick_set.round_1_game_1 = int(request.POST['game_1_pick'])
+    except (KeyError, ValueError):
+        pass
+    try:
+        pick_set.round_1_game_2 = int(request.POST['game_2_pick'])
+    except (KeyError, ValueError):
+        pass
+    try:
+        pick_set.round_1_game_3 = int(request.POST['game_3_pick'])
+    except (KeyError, ValueError):
+        pass
+    try:
+        pick_set.round_1_game_4 = int(request.POST['game_4_pick'])
+    except (KeyError, ValueError):
+        pass
     pick_set.save()
     return redirect(f'/picks/{pick_set.id}/')
