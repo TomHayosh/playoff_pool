@@ -2,6 +2,7 @@ from django.test import LiveServerTestCase
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.keys import Keys
+from unittest import skip
 import time
 
 MAX_WAIT = 10
@@ -164,6 +165,10 @@ class NewVisitorTest(LiveServerTestCase):
         mike_picks_url = self.browser.current_url
         self.assertRegex(mike_picks_url, '/picks/.+')
         self.assertNotEqual(chuck_picks_url, mike_picks_url)
+
+    @skip
+    def test_layout_and_styling(self):
+        self.browser.get(self.live_server_url)
 
         # He visits that URL again and sees his picks are still there.
         # self.fail('Finish the test!')
