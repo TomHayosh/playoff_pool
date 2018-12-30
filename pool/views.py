@@ -1,6 +1,10 @@
 from django.shortcuts import render, redirect
 from pool.models import PickSet
+import datetime
 
+
+round_1_expiration_time = datetime.datetime(2019, 1, 10, 18)
+# round_1_expiration_time = datetime.datetime(2018, 12, 29, 21, 41)
 
 # Create your views here.
 def home_page(request):
@@ -45,8 +49,15 @@ def new_picks(request):
 
 
 def edit_picks(request, pick_set_id):
+    editing_open = False
     pick_set = PickSet.objects.get(id=pick_set_id)
-    return render(request, 'edit.html', {'pick_set': pick_set})
+    now = datetime.datetime.now()
+    if now < round_1_expiration_time:
+        editing_open = True
+    return render(request, 'edit.html', {
+        'pick_set': pick_set,
+        'editing_open': editing_open,
+    })
 
 
 def update_picks(request, pick_set_id):

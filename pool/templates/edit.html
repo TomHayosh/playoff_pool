@@ -5,6 +5,7 @@
   <body>
     <h1>2019 NFL Playoff Pool</h1>
     <h2>Your picks</h2>
+    {% if editing_open %}
     <form method="POST" action="/picks/{{ pick_set.id }}/update_picks">
       <input id="game_1" name="game_1_pick" value="{{ pick_set.round_1_game_1 }}"/>
       <input id="game_2" name="game_2_pick" value="{{ pick_set.round_1_game_2 }}"/>
@@ -13,6 +14,7 @@
       <input type="submit"/>
     {% csrf_token %}
     </form>
+    {% endif %}
 
     <table id="id_picks">
       <tr>

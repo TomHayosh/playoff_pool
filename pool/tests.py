@@ -1,6 +1,8 @@
 from django.test import TestCase
 from pool.models import PickSet
-import time
+from pool.views import round_1_expiration_time
+from unittest import skip
+import datetime
 
 
 # Create your tests here.
@@ -71,8 +73,8 @@ class PicksViewTest(TestCase):
         response = self.client.get(f'/picks/{correct_set.id}/')
         self.assertEqual(response.context['pick_set'], correct_set)
 
+    @skip("Time based testing")
     def test_cannot_edit_after_games_start(self):
-        start_time = time.time()
         # Need to set the expiration time as start_time + 5 seconds
         pick_set = PickSet.objects.create(
             round_1_game_1=-7,
@@ -83,7 +85,7 @@ class PicksViewTest(TestCase):
 
         response = self.client.get(f'/picks/{pick_set.id}/')
         self.assertContains(response, 'edit_picks')
-        time.sleep(3)
+        # time.sleep(3)
         response = self.client.get(f'/picks/{pick_set.id}/')
         self.assertNotContains(response, 'edit_picks')
 
@@ -104,13 +106,9 @@ class PicksEditTest(TestCase):
         )
         response = self.client.get(f'/picks/{pick_set.id}/edit/')
         self.assertContains(response, '<input')
-        time.sleep(3)
-        response = self.client.get(f'/picks/{pick_set.id}/edit/')
-        self.assertNotContains(response, '<input')
-        self.assertContains(response, 'Game picks are locked.')
 
+    @skip("Time based testing")
     def test_cannot_edit_after_games_start(self):
-        start_time = time.time()
         # Need to set the expiration time as start_time + 5 seconds
         other_set = PickSet.objects.create(
             round_1_game_1=-7,
@@ -119,11 +117,14 @@ class PicksEditTest(TestCase):
             round_1_game_4=-14,
         )
 
-        response = self.client.get(f'/picks/{other_set.id}/')
-        self.assertContains(response, 'edit_picks')
-        time.sleep(5)
-        response = self.client.get(f'/picks/{other_set.id}/')
-        self.assertNotContains(response, 'edit_picks')
+        response = self.client.get(f'/picks/{other_set.id}/edit/')
+        print(response.content.decode())
+        self.assertContains(response, '<input')
+        # time.sleep(5)
+        round_1_expiration_time = datetime.datetime(2018, 12, 28)
+        response = self.client.get(f'/picks/{other_set.id}/edit/')
+        self.assertNotContains(response, '<input')
+        self.assertContains(response, 'Game picks are locked.')
 
 
 class NewPicksTest(TestCase):
