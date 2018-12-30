@@ -1,17 +1,5 @@
-<html>
-  <head>
-    <title>2019 NFL Playoff Pool</title>
-  </head>
-  <body>
-    <h1>2019 NFL Playoff Pool</h1>
-    <h2>Your picks</h2>
-    <form method="POST" action="/picks/new">
-      <input id="game_1" name="game_1_pick" placeholder="a"/>
-      <input id="game_2" name="game_2_pick" placeholder="b"/>
-      <input id="game_3" name="game_3_pick" placeholder="c"/>
-      <input id="game_4" name="game_4_pick" placeholder="d"/>
-      <input type="submit"/>
-    {% csrf_token %}
-    </form>
-  </body>
-</html>
+{% extends 'base.html' %}
+
+{% block header_text %}Enter picks to start a new pick set{% endblock %}
+
+{% block form_action %}/picks/new{% endblock %}

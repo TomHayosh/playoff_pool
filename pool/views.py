@@ -8,7 +8,7 @@ round_1_expiration_time = datetime.datetime(2019, 1, 10, 18)
 
 # Create your views here.
 def home_page(request):
-    return render(request, 'home.html')
+    return render(request, 'home.html', {'editing_open': True})
 
 
 def view_picks(request, pick_set_id):

@@ -1,21 +1,10 @@
-<html>
-  <head>
-    <title>2019 NFL Playoff Pool</title>
-  </head>
-  <body>
-    <h1>2019 NFL Playoff Pool</h1>
-    <h2>Your picks</h2>
-    {% if editing_open %}
-    <form method="POST" action="/picks/{{ pick_set.id }}/update_picks">
-      <input id="game_1" name="game_1_pick" value="{{ pick_set.round_1_game_1 }}"/>
-      <input id="game_2" name="game_2_pick" value="{{ pick_set.round_1_game_2 }}"/>
-      <input id="game_3" name="game_3_pick" value="{{ pick_set.round_1_game_3 }}"/>
-      <input id="game_4" name="game_4_pick" value="{{ pick_set.round_1_game_4 }}"/>
-      <input type="submit"/>
-    {% csrf_token %}
-    </form>
-    {% endif %}
+{% extends 'base.html' %}
 
+{% block header_text %}Edit your picks{% endblock %}
+
+{% block form_action %}/picks/{{ pick_set.id }}/update_picks{% endblock %}
+
+{% block table %}
     <table id="id_picks">
       <tr>
         <td>Game 1: {{ pick_set.round_1_game_1 }}</td>
@@ -30,5 +19,4 @@
         <td>Game 4: {{ pick_set.round_1_game_4 }}</td>
       </tr>
     </table>
-  </body>
-</html>
+{% endblock %}
