@@ -1,22 +1,38 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
+
   <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>2019 NFL Playoff Pool</title>
+    <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   </head>
   <body>
-    <h1>2019 NFL Playoff Pool</h1>
-    <h2>{% block header_text %}{% endblock %}</h2>
-    {% if editing_open %}
-    <form method="POST" action="{% block form_action %}{% endblock %}">
-      <input id="game_1" name="game_1_pick" value="{{ pick_set.round_1_game_1 }}"/>
-      <input id="game_2" name="game_2_pick" value="{{ pick_set.round_1_game_2 }}"/>
-      <input id="game_3" name="game_3_pick" value="{{ pick_set.round_1_game_3 }}"/>
-      <input id="game_4" name="game_4_pick" value="{{ pick_set.round_1_game_4 }}"/>
-      <input type="submit"/>
-      {% csrf_token %}
-    </form>
-    {% endif %}
+    <div class="container">
+      <div class="row">
+        <div class=col-md-6 col-md-offset-3">
+          <h1>2019 NFL Playoff Pool</h1>
+          <h2>{% block header_text %}{% endblock %}</h2>
+          {% if editing_open %}
+           <form method="POST" action="{% block form_action %}{% endblock %}">
+            <input id="game_1" name="game_1_pick" value="{{ pick_set.round_1_game_1 }}"/>
+            <input id="game_2" name="game_2_pick" value="{{ pick_set.round_1_game_2 }}"/>
+            <input id="game_3" name="game_3_pick" value="{{ pick_set.round_1_game_3 }}"/>
+            <input id="game_4" name="game_4_pick" value="{{ pick_set.round_1_game_4 }}"/>
+            <input type="submit"/>
+            {% csrf_token %}
+          </form>
+          {% endif %}
+        </div>
+      </div>
 
-    {% block table %}
-    {% endblock %}
+      <div class="row">
+        <div class=col-md-6 col-md-offset-3">
+          {% block table %}
+          {% endblock %}
+        </div>
+      </div>
+    </div>
   </body>
 </html>
