@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block header_text %}Enter your picks{% endblock %}
+{% block header_text %}{{ pick_set.name }}: Enter your picks{% endblock %}
 
 {% block pagebody %}
           {% if editing_open %}

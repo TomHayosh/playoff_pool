@@ -24,26 +24,11 @@ def view_picks(request, pick_set_id):
 def new_picks(request):
     # FIXME: The 0 default values should be specified elsewhere and read in.
     try:
-        temp_round_1_game_1 = int(request.POST['game_1_pick'])
+        temp_name = request.POST['player_name']
     except (KeyError, ValueError):
-        temp_round_1_game_1 = 0
-    try:
-        temp_round_1_game_2 = int(request.POST['game_2_pick'])
-    except (KeyError, ValueError):
-        temp_round_1_game_2 = 0
-    try:
-        temp_round_1_game_3 = int(request.POST['game_3_pick'])
-    except (KeyError, ValueError):
-        temp_round_1_game_3 = 0
-    try:
-        temp_round_1_game_4 = int(request.POST['game_4_pick'])
-    except (KeyError, ValueError):
-        temp_round_1_game_4 = 0
+        temp_name = 'No name'
     pick_set = PickSet.objects.create(
-        round_1_game_1=temp_round_1_game_1,
-        round_1_game_2=temp_round_1_game_2,
-        round_1_game_3=temp_round_1_game_3,
-        round_1_game_4=temp_round_1_game_4,
+        name=temp_name,
     )
     return redirect(f'/picks/{pick_set.id}/edit')
 
