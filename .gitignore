@@ -8,3 +8,4 @@ geckodriver.log
 .pp-env
 __pycache__
 *.pyc
+/static
