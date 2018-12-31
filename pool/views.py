@@ -45,7 +45,7 @@ def new_picks(request):
         round_1_game_3=temp_round_1_game_3,
         round_1_game_4=temp_round_1_game_4,
     )
-    return redirect(f'/picks/{pick_set.id}/')
+    return redirect(f'/picks/{pick_set.id}/edit')
 
 
 def edit_picks(request, pick_set_id):

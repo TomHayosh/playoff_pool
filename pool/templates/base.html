@@ -9,11 +9,13 @@
     <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   </head>
   <body>
+    <!-- Don't forget fake NPS - reject 1-6 inputs. For TPS (Tom Promoter Score) Reports -->
     <div class="container">
       <div class="row">
         <div class=col-md-12 col-md-offset-3">
           <h1>2019 NFL Playoff Pool</h1>
           <h2>{% block header_text %}{% endblock %}</h2>
+          {% block pagebody %}{% endblock %}
           {% if editing_open %}
            <form method="POST" action="{% block form_action %}{% endblock %}">
             <div class=col-md-12">

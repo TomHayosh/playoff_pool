@@ -1,5 +1,12 @@
 {% extends 'base.html' %}
 
-{% block header_text %}Enter picks to start a new pick set{% endblock %}
+{% block header_text %}Enter your name to start a new pick set{% endblock %}
 
-{% block form_action %}/picks/new{% endblock %}
+{% block pagebody %}
+  <form method="POST" action="/picks/new">
+    <div class=col-md-12">
+      <input id="participant" placeholder="Enter your full name"/>
+    </div>
+    {% csrf_token %}
+  </form>
+{% endblock %}
