@@ -16,40 +16,6 @@
           <h1>2019 NFL Playoff Pool</h1>
           <h2>{% block header_text %}{% endblock %}</h2>
           {% block pagebody %}{% endblock %}
-          {% if editing_open %}
-           <form method="POST" action="{% block form_action %}{% endblock %}">
-            <div class=col-md-12">
-              <select id="select_game_1">
-                <option value="colts">Colts</option>
-                <option value="texans" selected="selected">Texans</option>
-              </select>
-              <input type="number" id="game_1" name="game_1_pick" min="0" value="{{ pick_set.round_1_game_1 }}"/>
-            </div>
-            <div class=col-md-12">
-              <select id="select_game_2">
-                <option value="chargers">Chargers</option>
-                <option value="ravens" selected="selected">Ravens</option>
-              </select>
-              <input type="number" id="game_2" name="game_2_pick" min="0" value="{{ pick_set.round_1_game_2 }}"/>
-            </div>
-            <div class=col-md-12">
-              <select id="select_game_3">
-                <option value="eagles">Eagles</option>
-                <option value="bears" selected="selected">Bears</option>
-              </select>
-              <input type="number" id="game_3" name="game_3_pick" min="0" value="{{ pick_set.round_1_game_3 }}"/>
-            </div>
-            <div class=col-md-12">
-              <select id="select_game_4">
-                <option value="seahawks">Seahawks</option>
-                <option value="cowboys" selected="selected">Cowboys</option>
-              </select>
-              <input type="number" id="game_4" name="game_4_pick" min="0" value="{{ pick_set.round_1_game_4 }}"/>
-            </div>
-            <input type="submit"/>
-            {% csrf_token %}
-          </form>
-          {% endif %}
         </div>
       </div>
 
