@@ -135,7 +135,8 @@ class NewPicksTest(TestCase):
         data['game_2_pick'] = 10
         data['game_3_pick'] = -14
         data['game_4_pick'] = 13
-        self.client.post('/picks/new', data)
+        pick_set = PickSet.objects.create(name="Test user")
+        self.client.post(f'/picks/{pick_set.id}/update_picks', data)
         self.assertEqual(PickSet.objects.count(), 1)
         pick_set = PickSet.objects.first()
         self.assertEqual(pick_set.round_1_game_3, -14)
@@ -143,7 +144,8 @@ class NewPicksTest(TestCase):
     def test_can_save_a_partial_new_pick_set(self):
         data = {}
         data['game_1_pick'] = 24
-        self.client.post('/picks/new', data)
+        pick_set = PickSet.objects.create(name="Test user")
+        self.client.post(f'/picks/{pick_set.id}/update_picks', data)
         self.assertEqual(PickSet.objects.count(), 1)
         pick_set = PickSet.objects.first()
         self.assertEqual(pick_set.round_1_game_1, 24)
@@ -152,7 +154,8 @@ class NewPicksTest(TestCase):
     def test_can_save_a_partial_update_pick_set(self):
         data = {}
         data['game_1_pick'] = 24
-        self.client.post('/picks/new', data)
+        pick_set = PickSet.objects.create(name="Test user")
+        self.client.post(f'/picks/{pick_set.id}/update_picks', data)
         self.assertEqual(PickSet.objects.count(), 1)
         pick_set = PickSet.objects.first()
         self.assertEqual(pick_set.round_1_game_1, 24)
