@@ -50,25 +50,9 @@ class NewVisitorTest(StaticLiveServerTestCase):
         # He is able to create a new pick set for the first round of
         # four games.
         inputbox1 = self.browser.find_element_by_id('game_1')
-        self.assertEqual(
-            inputbox1.get_attribute('placeholder'),
-            'a'
-        )
         inputbox2 = self.browser.find_element_by_id('game_2')
-        self.assertEqual(
-            inputbox2.get_attribute('placeholder'),
-            'b'
-        )
         inputbox3 = self.browser.find_element_by_id('game_3')
-        self.assertEqual(
-            inputbox3.get_attribute('placeholder'),
-            'c'
-        )
         inputbox4 = self.browser.find_element_by_id('game_4')
-        self.assertEqual(
-            inputbox4.get_attribute('placeholder'),
-            'd'
-        )
 
         # He picks home team by 10, 7, 3, then visiting by 10.
         inputbox1.send_keys('10')
