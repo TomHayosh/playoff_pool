@@ -19,8 +19,8 @@ from pool import views
 
 urlpatterns = [
     path('new', views.new_picks, name='new_picks'),
-    path('<int:pick_set_id>/', views.view_picks, name='view_picks'),
-    path('<int:pick_set_id>/update_picks', views.update_picks,
+    path('', views.view_picks, name='view_picks'),
+    path('update_picks', views.update_picks,
          name='update_picks'),
-    path('<int:pick_set_id>/edit/', views.edit_picks, name='edit_picks'),
+    path('edit/', views.edit_picks, name='edit_picks'),
 ]

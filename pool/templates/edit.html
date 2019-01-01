@@ -4,7 +4,7 @@
 
 {% block pagebody %}
           {% if editing_open %}
-           <form method="POST" action="/picks/{{ pick_set.id }}/update_picks">
+           <form method="POST" action="/picks/update_picks">
             <div class=col-md-12">
               <select id="select_game_1" name='game_1_team'>
                 <option value="0"{% if pick_set.round_1_game_1_team == 0 %} selected="selected"{% endif %}>Colts</option>

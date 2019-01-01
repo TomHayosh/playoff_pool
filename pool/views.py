@@ -1,4 +1,7 @@
+from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
+from django.contrib.auth.decorators import login_required
+from pool.forms import SignUpForm
 from pool.models import PickSet
 import datetime
 
@@ -7,17 +10,38 @@ round_1_expiration_time = datetime.datetime(2019, 1, 10, 18)
 # round_1_expiration_time = datetime.datetime(2018, 12, 29, 21, 41)
 
 
+def signup(request):
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            raw_password = form.cleaned_data.get('password1')
+            user = authenticate(username=username, password=raw_password)
+            login(request, user)
+            pick_set = PickSet.objects.create(
+                name=user.username,
+            )
+            return redirect(f'/picks/edit')
+    else:
+        form = SignUpForm()
+    return render(request, 'signup.html', {'form': form})
+
+
 # Create your views here.
 def home_page(request):
     return render(request, 'home.html', {'editing_open': True})
 
 
-def view_picks(request, pick_set_id):
+@login_required
+def view_picks(request):
     template_to_use = 'picks.html'
-    pick_set = PickSet.objects.get(id=pick_set_id)
+    pick_set = PickSet.objects.get(name=request.user.username)
     if pick_set is None:
         # FIXME: This should render against an error page
         return render(request, template_to_use)
+    if request.user.username != pick_set.name:
+        return render(request, 'signup.html', {'form': SignUpForm()})
     return render(request, template_to_use, {
         'pick_set': pick_set,
     })
@@ -32,12 +56,18 @@ def new_picks(request):
     pick_set = PickSet.objects.create(
         name=temp_name,
     )
-    return redirect(f'/picks/{pick_set.id}/edit')
+    return redirect(f'/picks/edit')
 
 
-def edit_picks(request, pick_set_id):
+@login_required
+def edit_picks(request):
+    pick_set = PickSet.objects.get(name=request.user.username)
+    if pick_set is None:
+        # FIXME: This should render against an error page
+        return render(request, template_to_use)
+    if request.user.username != pick_set.name:
+        return render(request, 'signup.html', {'form': SignUpForm()})
     editing_open = False
-    pick_set = PickSet.objects.get(id=pick_set_id)
     now = datetime.datetime.now()
     if now < round_1_expiration_time:
         editing_open = True
@@ -47,8 +77,9 @@ def edit_picks(request, pick_set_id):
     })
 
 
-def update_picks(request, pick_set_id):
-    pick_set = PickSet.objects.get(id=pick_set_id)
+@login_required
+def update_picks(request):
+    pick_set = PickSet.objects.get(name=request.user.username)
     try:
         pick_set.round_1_game_1_team = int(request.POST['game_1_team'])
     except (KeyError, ValueError):
@@ -82,4 +113,4 @@ def update_picks(request, pick_set_id):
     except (KeyError, ValueError):
         pass
     pick_set.save()
-    return redirect(f'/picks/{pick_set.id}/')
+    return redirect(f'/picks/')
