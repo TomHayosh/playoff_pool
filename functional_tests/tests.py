@@ -2,6 +2,7 @@ from django.contrib.staticfiles.testing import StaticLiveServerTestCase
 from selenium import webdriver
 from selenium.common.exceptions import WebDriverException
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import Select
 from unittest import skip
 import time
 
@@ -178,10 +179,18 @@ class NewVisitorTest(StaticLiveServerTestCase):
         inputbox3 = self.browser.find_element_by_id('game_3')
         inputbox4 = self.browser.find_element_by_id('game_4')
 
-        # He picks home team by 10, 7, 3, then visiting by 10.
+        # He picks visting team by 10, 7, 3, 10.
+        select = Select(self.browser.find_element_by_id('select_game_1'))
+        select.select_by_value('0')
         inputbox1.send_keys('10')
+        select = Select(self.browser.find_element_by_id('select_game_2'))
+        select.select_by_value('0')
         inputbox2.send_keys('7')
+        select = Select(self.browser.find_element_by_id('select_game_3'))
+        select.select_by_value('0')
         inputbox3.send_keys('3')
+        select = Select(self.browser.find_element_by_id('select_game_4'))
+        select.select_by_value('0')
         inputbox4.send_keys('10')
         # inputbox4.send_keys('-10')
 
