@@ -22,10 +22,16 @@ def signup(request):
             pick_set = PickSet.objects.create(
                 name=user.username,
             )
-            return redirect(f'/picks/edit')
+            return redirect('/picks/edit')
+        else:
+            return redirect(f'/')
     else:
         form = SignUpForm()
     return render(request, 'signup.html', {'form': form})
+
+
+def profile(request):
+    return redirect('/picks')
 
 
 # Create your views here.

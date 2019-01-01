@@ -21,6 +21,7 @@ from pool import urls as pool_urls
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('django.contrib.auth.urls')),
+    path('accounts/profile/', pool_views.profile, name='profile'),
     path('signup/', pool_views.signup, name='signup'),
     path('', pool_views.home_page, name='home'),
     path('picks/', include(pool_urls)),
