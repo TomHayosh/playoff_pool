@@ -24,24 +24,37 @@ class PicksViewTest(TestCase):
         response = self.client.get(f'/picks/{pick_set.id}/')
         self.assertTemplateUsed(response, 'picks.html')
 
-    def test_displays_all_picks(self):
-        correct_set = PickSet.objects.create(
+    def test_displays_home_team_picks_as_default(self):
+        pick_set = PickSet.objects.create(
             round_1_game_1=3,
             round_1_game_2=3,
             round_1_game_3=3,
             round_1_game_4=3,
         )
-        other_set = PickSet.objects.create(
-            round_1_game_1=-7,
-            round_1_game_2=-7,
-            round_1_game_3=-7,
-            round_1_game_4=-7,
+
+        response = self.client.get(f'/picks/{pick_set.id}/')
+        self.assertContains(response, '<b>Texans')
+        self.assertContains(response, '<b>Cowboys')
+        self.assertContains(response, '<b>Ravens')
+        self.assertContains(response, '<b>Bears')
+
+    def test_displays_visiting_team_picks(self):
+        pick_set = PickSet.objects.create(
+            round_1_game_1_team=0,
+            round_1_game_1=3,
+            round_1_game_2_team=0,
+            round_1_game_2=3,
+            round_1_game_3_team=0,
+            round_1_game_3=3,
+            round_1_game_4_team=0,
+            round_1_game_4=3,
         )
 
-        response = self.client.get(f'/picks/{correct_set.id}/')
-        self.assertContains(response, '3')
-        # response = self.client.get(f'/picks/{other_set.id}/')
-        # self.assertContains(response, '7')
+        response = self.client.get(f'/picks/{pick_set.id}/')
+        self.assertContains(response, '<b>Colts')
+        self.assertContains(response, '<b>Seahawks')
+        self.assertContains(response, '<b>Chargers')
+        self.assertContains(response, '<b>Eagles')
 
     def test_displays_negative_picks(self):
         other_set = PickSet.objects.create(
@@ -106,6 +119,36 @@ class PicksEditTest(TestCase):
         )
         response = self.client.get(f'/picks/{pick_set.id}/edit/')
         self.assertContains(response, '<input')
+
+    def test_shows_selected_home_teams_as_default(self):
+        pick_set = PickSet.objects.create(
+            round_1_game_1=3,
+            round_1_game_2=3,
+            round_1_game_3=3,
+            round_1_game_4=3,
+        )
+        response = self.client.get(f'/picks/{pick_set.id}/edit/')
+        self.assertContains(response, '"selected">Texans')
+        self.assertContains(response, '"selected">Cowboys')
+        self.assertContains(response, '"selected">Ravens')
+        self.assertContains(response, '"selected">Bears')
+
+    def test_shows_selected_visiting_teams(self):
+        pick_set = PickSet.objects.create(
+            round_1_game_1_team=0,
+            round_1_game_1=3,
+            round_1_game_2_team=0,
+            round_1_game_2=3,
+            round_1_game_3_team=0,
+            round_1_game_3=3,
+            round_1_game_4_team=0,
+            round_1_game_4=3,
+        )
+        response = self.client.get(f'/picks/{pick_set.id}/edit/')
+        self.assertContains(response, '"selected">Colts')
+        self.assertContains(response, '"selected">Seahawks')
+        self.assertContains(response, '"selected">Chargers')
+        self.assertContains(response, '"selected">Eagles')
 
     @skip("Time based testing")
     def test_cannot_edit_after_games_start(self):

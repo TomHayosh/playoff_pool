@@ -156,6 +156,43 @@ class NewVisitorTest(StaticLiveServerTestCase):
         self.wait_for_text_in_element('Ravens by 3', "pick_3")
         self.wait_for_text_in_element('Bears by 56', "pick_4")
 
+    def test_can_pick_visiting_teams(self):
+        # After years of running the playoff pool via email and Excel
+        # spreadsheets, it is now managed from the cloud.
+
+        # Chuck creates a pick set
+        self.browser.get(self.live_server_url)
+        # self.browser.get('http://tomhayosh.pythonanywhere.com/')
+
+        inputbox = self.browser.find_element_by_id('participant')
+        inputbox.send_keys('Chuck Medhurst')
+        inputbox.send_keys(Keys.ENTER)
+
+        # He sees his name on the edit page
+        self.wait_for_subheading('Chuck Medhurst: Enter your picks')
+
+        # He is able to create a new pick set for the first round of
+        # four games.
+        inputbox1 = self.browser.find_element_by_id('game_1')
+        inputbox2 = self.browser.find_element_by_id('game_2')
+        inputbox3 = self.browser.find_element_by_id('game_3')
+        inputbox4 = self.browser.find_element_by_id('game_4')
+
+        # He picks home team by 10, 7, 3, then visiting by 10.
+        inputbox1.send_keys('10')
+        inputbox2.send_keys('7')
+        inputbox3.send_keys('3')
+        inputbox4.send_keys('10')
+        # inputbox4.send_keys('-10')
+
+        # When he hits enter, the page updates and shows the entered picks.
+        inputbox4.send_keys(Keys.ENTER)
+
+        self.wait_for_text_in_element('Colts by 10', "pick_1")
+        self.wait_for_text_in_element('Seahawks by 7', "pick_2")
+        self.wait_for_text_in_element('Chargers by 3', "pick_3")
+        self.wait_for_text_in_element('Eagles by 10', "pick_4")
+
     @skip('fix')
     def test_user_can_submit_partial_pick_set(self):
         # Chuck knows what he wants for the first game

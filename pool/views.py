@@ -6,6 +6,7 @@ import datetime
 round_1_expiration_time = datetime.datetime(2019, 1, 10, 18)
 # round_1_expiration_time = datetime.datetime(2018, 12, 29, 21, 41)
 
+
 # Create your views here.
 def home_page(request):
     return render(request, 'home.html', {'editing_open': True})
@@ -15,6 +16,7 @@ def view_picks(request, pick_set_id):
     template_to_use = 'picks.html'
     pick_set = PickSet.objects.get(id=pick_set_id)
     if pick_set is None:
+        # FIXME: This should render against an error page
         return render(request, template_to_use)
     return render(request, template_to_use, {
         'pick_set': pick_set,
@@ -48,7 +50,15 @@ def edit_picks(request, pick_set_id):
 def update_picks(request, pick_set_id):
     pick_set = PickSet.objects.get(id=pick_set_id)
     try:
+        pick_set.round_1_game_1_team = int(request.POST['game_1_team'])
+    except (KeyError, ValueError):
+        pass
+    try:
         pick_set.round_1_game_1 = int(request.POST['game_1_pick'])
+    except (KeyError, ValueError):
+        pass
+    try:
+        pick_set.round_1_game_2_team = int(request.POST['game_2_team'])
     except (KeyError, ValueError):
         pass
     try:
@@ -56,7 +66,15 @@ def update_picks(request, pick_set_id):
     except (KeyError, ValueError):
         pass
     try:
+        pick_set.round_1_game_3_team = int(request.POST['game_3_team'])
+    except (KeyError, ValueError):
+        pass
+    try:
         pick_set.round_1_game_3 = int(request.POST['game_3_pick'])
+    except (KeyError, ValueError):
+        pass
+    try:
+        pick_set.round_1_game_4_team = int(request.POST['game_4_team'])
     except (KeyError, ValueError):
         pass
     try:

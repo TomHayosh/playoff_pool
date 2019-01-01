@@ -7,19 +7,31 @@
 {% block pagebody %}
   <ul id="picks_list" class="list-group">
     <li id="pick_1" class="list-group-item">
-      <p><b>Texans</b> by <b>{{ pick_set.round_1_game_1 }}</b> over Colts</p>
+      <p>
+        {% if pick_set.round_1_game_1_team == 1 %}<b>Texans</b>{% else %}<b>Colts</b>{% endif %} by
+        <b>{{ pick_set.round_1_game_1 }}</b>
+      </p>
       <p>3:35 Saturday, January 5, NBC</p>
     </li>
     <li id="pick_2" class="list-group-item">
-      <p><b>Cowboys</b> by <b>{{ pick_set.round_1_game_2 }}</b> over Seahawks</p>
+      <p>
+        {% if pick_set.round_1_game_2_team == 1 %}<b>Cowboys</b>{% else %}<b>Seahawks</b>{% endif %} by
+        <b>{{ pick_set.round_1_game_2 }}</b>
+      </p>
       <p>7:15 Saturday, January 5, FOX</p>
     </li>
     <li id="pick_3" class="list-group-item">
-      <p><b>Ravens</b> by <b>{{ pick_set.round_1_game_3 }}</b> over Chargers</p>
+      <p>
+        {% if pick_set.round_1_game_3_team == 1 %}<b>Ravens</b>{% else %}<b>Chargers</b>{% endif %} by
+        <b>{{ pick_set.round_1_game_3 }}</b>
+      </p>
       <p>12:05 Sunday, January 6, CBS</p>
     </li>
     <li id="pick_4" class="list-group-item">
-        <p><b>Bears</b> by <b>{{ pick_set.round_1_game_4 }}</b> over Eagles</p>
+      <p>
+        {% if pick_set.round_1_game_4_team == 1 %}<b>Bears</b>{% else %}<b>Eagles</b>{% endif %} by
+        <b>{{ pick_set.round_1_game_4 }}</b>
+      </p>
         <p>3:35 Sunday, January 6, ESPN</p>
     </li>
     <br/>

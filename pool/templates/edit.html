@@ -6,33 +6,33 @@
           {% if editing_open %}
            <form method="POST" action="/picks/{{ pick_set.id }}/update_picks">
             <div class=col-md-12">
-              <select id="select_game_1">
-                <option value="colts">Colts</option>
-                <option value="texans" selected="selected">Texans</option>
+              <select id="select_game_1" name='game_1_team'>
+                <option value="0"{% if pick_set.round_1_game_1_team == 0 %} selected="selected"{% endif %}>Colts</option>
+                <option value="1"{% if pick_set.round_1_game_1_team == 1 %} selected="selected"{% endif %}>Texans</option>
               </select>
               <input type="number" id="game_1" name="game_1_pick" min="0" value="{{ pick_set.round_1_game_1 }}"/>
               <p>3:35 Saturday, January 5, NBC</p>
             </div>
             <div class=col-md-12">
-              <select id="select_game_2">
-                <option value="seahawks">Seahawks</option>
-                <option value="cowboys" selected="selected">Cowboys</option>
+              <select id="select_game_2" name='game_2_team'>
+                <option value="0"{% if pick_set.round_1_game_2_team == 0 %} selected="selected"{% endif %}>Seahawks</option>
+                <option value="1"{% if pick_set.round_1_game_2_team == 1 %} selected="selected"{% endif %}>Cowboys</option>
               </select>
               <input type="number" id="game_2" name="game_2_pick" min="0" value="{{ pick_set.round_1_game_2 }}"/>
               <p>7:15 Saturday, January 5, FOX</p>
             </div>
             <div class=col-md-12">
-              <select id="select_game_3">
-                <option value="chargers">Chargers</option>
-                <option value="ravens" selected="selected">Ravens</option>
+              <select id="select_game_3" name='game_3_team'>
+                <option value="0"{% if pick_set.round_1_game_3_team == 0 %} selected="selected"{% endif %}>Chargers</option>
+                <option value="1"{% if pick_set.round_1_game_3_team == 1 %} selected="selected"{% endif %}>Ravens</option>
               </select>
               <input type="number" id="game_3" name="game_3_pick" min="0" value="{{ pick_set.round_1_game_3 }}"/>
               <p>12:05 Sunday, January 6, CBS</p>
             </div>
             <div class=col-md-12">
-              <select id="select_game_4">
-                <option value="eagles">Eagles</option>
-                <option value="bears" selected="selected">Bears</option>
+              <select id="select_game_4" name='game_4_team'>
+                <option value="0"{% if pick_set.round_1_game_4_team == 0 %} selected="selected"{% endif %}>Eagles</option>
+                <option value="1"{% if pick_set.round_1_game_4_team == 1 %} selected="selected"{% endif %}>Bears</option>
               </select>
               <input type="number" id="game_4" name="game_4_pick" min="0" value="{{ pick_set.round_1_game_4 }}"/>
               <p>3:35 Sunday, January 6, ESPN</p>
