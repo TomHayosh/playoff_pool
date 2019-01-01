@@ -39,6 +39,12 @@
       <input type="submit" id="edit_picks" value="Edit Picks"/>
     </form>
     <br/>
+{% if user.is_authenticated %}
+  <p><a href="{% url 'logout' %}">Logout</a></p>
+{% else %}
+  <p>You are not logged in</p>
+  <a href="{% url 'login' %}">login</a>
+{% endif %}
     <!--
     <a href="mailto:thayosh@gmail.com?subject=Playoff%20Pool%20Feedback%20from%20picks%20page">Send feedback</a>
     -->

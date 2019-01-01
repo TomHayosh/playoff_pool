@@ -41,5 +41,12 @@
             <input type="submit" value="Submit picks"/>
             {% csrf_token %}
           </form>
+          <br/>
           {% endif %}
+{% if user.is_authenticated %}
+  <p><a href="{% url 'logout' %}">Logout</a></p>
+{% else %}
+  <p>You are not logged in</p>
+  <a href="{% url 'login' %}">login</a>
+{% endif %}
 {% endblock %}
