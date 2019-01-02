@@ -42,8 +42,9 @@ def home_page(request):
 @login_required
 def view_picks(request):
     template_to_use = 'picks.html'
-    pick_set = PickSet.objects.get(name=request.user.username)
-    if pick_set is None:
+    try:
+        pick_set = PickSet.objects.get(name=request.user.username)
+    except PickSet.DoesNotExist:
         pick_set = PickSet.objects.create(
             name=request.user.username,
         )
@@ -70,8 +71,9 @@ def new_picks(request):
 
 @login_required
 def edit_picks(request):
-    pick_set = PickSet.objects.get(name=request.user.username)
-    if pick_set is None:
+    try:
+        pick_set = PickSet.objects.get(name=request.user.username)
+    except PickSet.DoesNotExist:
         pick_set = PickSet.objects.create(
             name=request.user.username,
         )
