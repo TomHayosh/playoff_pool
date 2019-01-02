@@ -50,6 +50,8 @@ def view_picks(request):
         return render(request, 'signup.html', {'form': SignUpForm()})
     return render(request, template_to_use, {
         'pick_set': pick_set,
+        'first_name': request.user.first_name,
+        'last_name': request.user.last_name,
     })
 
 
@@ -79,6 +81,8 @@ def edit_picks(request):
         editing_open = True
     return render(request, 'edit.html', {
         'pick_set': pick_set,
+        'first_name': request.user.first_name,
+        'last_name': request.user.last_name,
         'editing_open': editing_open,
     })
 

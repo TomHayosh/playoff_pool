@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block header_text %}{{ pick_set.name }}'s picks{% endblock %}
+{% block header_text %}{{ first_name }} {{ last_name }}'s picks{% endblock %}
 
 {% block form_action %}/picks/{{ pick_set.id }}/update_picks{% endblock %}
 
