@@ -44,8 +44,9 @@ def view_picks(request):
     template_to_use = 'picks.html'
     pick_set = PickSet.objects.get(name=request.user.username)
     if pick_set is None:
-        # FIXME: This should render against an error page
-        return render(request, template_to_use)
+        pick_set = PickSet.objects.create(
+            name=request.user.username,
+        )
     if request.user.username != pick_set.name:
         return render(request, 'signup.html', {'form': SignUpForm()})
     return render(request, template_to_use, {
@@ -71,8 +72,9 @@ def new_picks(request):
 def edit_picks(request):
     pick_set = PickSet.objects.get(name=request.user.username)
     if pick_set is None:
-        # FIXME: This should render against an error page
-        return render(request, template_to_use)
+        pick_set = PickSet.objects.create(
+            name=request.user.username,
+        )
     if request.user.username != pick_set.name:
         return render(request, 'signup.html', {'form': SignUpForm()})
     editing_open = False
