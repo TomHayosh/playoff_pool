@@ -99,6 +99,8 @@ def results(request, whatif=0):
     row = pad_row(row)
     data.append(row)
 
+    boilerplate_len = len(data)
+
     for pick in PickSet.objects.all():
         user = User.objects.get(username=pick.name)
         row = [user.first_name + ' ' + user.last_name]
@@ -142,7 +144,7 @@ def results(request, whatif=0):
                 total_score += abs(delta)
         row[1] = total_score
         row_added = False
-        for i in range(3, len(data)):
+        for i in range(boilerplate_len, len(data)):
             if row[1] < data[i][1]:
                 data.insert(i, row)
                 row_added = True

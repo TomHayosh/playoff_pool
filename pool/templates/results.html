@@ -13,4 +13,14 @@
     </tr>
     {% endfor %}
   </table>
+  <br/>
+  {% if user.is_authenticated %}
+    <form method="GET" action="/picks/">
+      <input type="submit" id="view_picks" value="Return to my picks"/>
+    </form>
+  {% else %}
+    <form method="GET" action="{% url 'login' %}">
+      <input type="submit" id="login" value="Log in"/>
+    </form>
+  {% endif %}
 {% endblock %}

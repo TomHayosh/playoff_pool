@@ -5,6 +5,7 @@
 {% block form_action %}/picks/{{ pick_set.id }}/update_picks{% endblock %}
 
 {% block pagebody %}
+{% if user.is_authenticated %}
   <ul id="picks_list" class="list-group">
     <li id="pick_1" class="list-group-item">
       <p>
@@ -39,8 +40,13 @@
       <input type="submit" id="edit_picks" value="Edit Picks"/>
     </form>
     <br/>
-{% if user.is_authenticated %}
-  <p><a href="{% url 'logout' %}">Logout</a></p>
+    <form method="GET" action="/picks/results/">
+      <input type="submit" id="view_results" value="View Results"/>
+    </form>
+    <br/>
+    <form method="GET" action="{% url 'logout' %}">
+      <input type="submit" id="view_picks" value="Logout"/>
+    </form>
 {% else %}
   <p>You are not logged in</p>
   <a href="{% url 'login' %}">login</a>

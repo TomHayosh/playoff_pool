@@ -57,9 +57,14 @@
           <p>All games have started. Picks can no longer be changed</p>
         {% endif %}
           <br/>
-          <a href="/picks/">Return to your picks page.</a>
+    <form method="GET" action="/picks/">
+      <input type="submit" id="view_picks" value="Return to my picks without submitting"/>
+    </form>
 {% if user.is_authenticated %}
-  <p><a href="{% url 'logout' %}">Logout</a></p>
+    <br/>
+    <form method="GET" action="{% url 'logout' %}">
+      <input type="submit" id="view_picks" value="Logout"/>
+    </form>
 {% else %}
   <p>You are not logged in</p>
   <a href="{% url 'login' %}">login</a>

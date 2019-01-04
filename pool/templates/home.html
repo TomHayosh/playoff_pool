@@ -12,8 +12,12 @@
 <p>This test covers the Wild Card weekend games that we do not use in the actual pool. You can participate in the alpha test at no cost and with no obligation to join the real pool next week.</p>
 <p>Pick the winner and margin of victory for each game. The goal is to get as close as possible to the actual outcomes, thus to have the lowest score.</p>
 <p>Send feedback to thayosh@gmail.com</p>
-<a href="signup/">Click here to sign up</a>
+    <form method="GET" action="signup/">
+      <input type="submit" id="signup" value="Click here to sign up"/>
+    </form>
 <br/>
 {% endif %}
-<a href="accounts/login/">Click here to log in</a>
+    <form method="GET" action="accounts/login/">
+      <input type="submit" id="login" value="Click here to log in"/>
+    </form>
 {% endblock %}
