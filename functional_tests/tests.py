@@ -73,7 +73,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
         header_text = self.browser.find_element_by_tag_name('h1').text
         self.assertIn('2019 NFL Playoff Pool', header_text)
         header_text = self.browser.find_element_by_tag_name('h2').text
-        self.assertIn('Enter your name', header_text)
+        self.assertIn('Welcome', header_text)
 
         inputbox = self.browser.find_element_by_id('participant')
         inputbox.send_keys('Chuck Medhurst')
@@ -95,7 +95,7 @@ class NewVisitorTest(StaticLiveServerTestCase):
         header_text = self.browser.find_element_by_tag_name('h1').text
         self.assertIn('2019 NFL Playoff Pool', header_text)
         header_text = self.browser.find_element_by_tag_name('h2').text
-        self.assertIn('Enter your name', header_text)
+        self.assertIn('Welcome', header_text)
 
         inputbox = self.browser.find_element_by_id('participant')
         inputbox.send_keys('Mike Holton')

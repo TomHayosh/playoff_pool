@@ -23,4 +23,5 @@ urlpatterns = [
     path('update_picks', views.update_picks,
          name='update_picks'),
     path('edit/', views.edit_picks, name='edit_picks'),
+    path('results/', views.results, name='results'),
 ]
