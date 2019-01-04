@@ -3,14 +3,11 @@
 {% block header_text %}Welcome!{% endblock %}
 
 {% block pagebody %}
-<!--
-  <form method="POST" action="/picks/new">
-    <div class=col-md-12">
-      <input id="participant" name="player_name" placeholder="Enter your full name"/>
-    </div>
-    {% csrf_token %}
-  </form>
--->
+{% if game_1_started %}
+<p>Thank you for your interest in the 2019 Playoff Pool alpha test.</p>
+<p>The first Wild Card week game has started, so no further entries may be added.</p>
+<p>Check this site again on Monday to enter the actual Playoff Pool.</p>
+{% else %}
 <p>This is an alpha test for the new online version of the NFL Playoff Pool</p>
 <p>This test covers the Wild Card weekend games that we do not use in the actual pool. You can participate in the alpha test at no cost and with no obligation to join the real pool next week.</p>
 <p>Pick the winner and margin of victory for each game. The goal is to get as close as possible to the actual outcomes, thus to have the lowest score.</p>
@@ -18,4 +15,5 @@
 <a href="accounts/login/">Click here to log in</a>
 <br/>
 <a href="signup/">Click here to sign up</a>
+{% endif %}
 {% endblock %}

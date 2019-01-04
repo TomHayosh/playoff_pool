@@ -12,11 +12,20 @@ round_1_matchups = [
     ['Eagles', 'Bears'],
 ]
 
-round_1_expiration_time = datetime.datetime(2019, 1, 10, 18)
-# round_1_expiration_time = datetime.datetime(2018, 12, 29, 21, 41)
-started = [True, False, False, False]
-finished = [True, False, False, False]
+started = [False, False, False, False]
+finished = [False, False, False, False]
 result = [24, -7, 10, 256]
+
+
+def update_started():
+    if datetime.datetime.now() > datetime.datetime(2019, 1, 5, 21, 30):
+        started[0] = True
+    if datetime.datetime.now() > datetime.datetime(2019, 1, 6, 1, 10):
+        started[1] = True
+    if datetime.datetime.now() > datetime.datetime(2019, 1, 6, 18, 00):
+        started[2] = True
+    if datetime.datetime.now() > datetime.datetime(2019, 1, 6, 21, 30):
+        started[3] = True
 
 
 def signup(request):
@@ -61,6 +70,7 @@ def pad_row(row):
 
 
 def results(request, whatif=0):
+    update_started()
     data = [
         [
             '', 'Total score',
@@ -75,9 +85,9 @@ def results(request, whatif=0):
     for i in range(4):
         if finished[i]:
             if result[i] > 0:
-                team = round_1_matchups[i][0]
-            else:
                 team = round_1_matchups[i][1]
+            else:
+                team = round_1_matchups[i][0]
             column = 2 * i + 2
             row[column] = team + ' by ' + str(result[i])
     data.append(row)
@@ -138,7 +148,8 @@ def profile(request):
 
 # Create your views here.
 def home_page(request):
-    return render(request, 'home.html', {'editing_open': True})
+    update_started()
+    return render(request, 'home.html', {'game_1_started': started[0]})
 
 
 @login_required
@@ -173,6 +184,7 @@ def new_picks(request):
 
 @login_required
 def edit_picks(request):
+    update_started()
     try:
         pick_set = PickSet.objects.get(name=request.user.username)
     except PickSet.DoesNotExist:
@@ -181,15 +193,14 @@ def edit_picks(request):
         )
     if request.user.username != pick_set.name:
         return render(request, 'signup.html', {'form': SignUpForm()})
-    editing_open = False
-    now = datetime.datetime.now()
-    if now < round_1_expiration_time:
-        editing_open = True
     return render(request, 'edit.html', {
         'pick_set': pick_set,
         'first_name': request.user.first_name,
         'last_name': request.user.last_name,
-        'editing_open': editing_open,
+        'game_1_open': not started[0],
+        'game_2_open': not started[1],
+        'game_3_open': not started[2],
+        'game_4_open': not started[3],
     })
 
 
