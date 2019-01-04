@@ -29,6 +29,9 @@ def update_started():
 
 
 def signup(request):
+    update_started()
+    if started[0]:
+        return home_page(request)
     if request.method == 'POST':
         form = SignUpForm(request.POST)
         if form.is_valid():
@@ -89,7 +92,7 @@ def results(request, whatif=0):
             else:
                 team = round_1_matchups[i][0]
             column = 2 * i + 2
-            row[column] = team + ' by ' + str(result[i])
+            row[column] = team + ' by ' + str(abs(result[i]))
     data.append(row)
 
     row = ['']
@@ -138,7 +141,14 @@ def results(request, whatif=0):
                 row[9] = abs(delta)
                 total_score += abs(delta)
         row[1] = total_score
-        data.append(row)
+        row_added = False
+        for i in range(3, len(data)):
+            if row[1] < data[i][1]:
+                data.insert(i, row)
+                row_added = True
+                break
+        if not row_added:
+            data.append(row)
     return render(request, 'results.html', {'data': data, 'whatif': True})
 
 
