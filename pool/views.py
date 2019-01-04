@@ -30,6 +30,10 @@ def signup(request):
             login(request, user)
             pick_set = PickSet.objects.create(
                 name=user.username,
+                round_1_game_1=1,
+                round_1_game_2=2,
+                round_1_game_3=3,
+                round_1_game_4=6,
             )
             return redirect('/picks/edit')
         else:
