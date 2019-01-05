@@ -22,7 +22,5 @@ urlpatterns = [
     path('update_picks', views.update_picks, name='update_picks'),
     path('edit/', views.edit_picks, name='edit_picks'),
     path('results/', views.results, name='results'),
-    path('results/<int:what_if>/', views.results, name='results'),
-    path('results/-<int:what_if>/', views.results_visitor_if, name='results'),
     path('alternate_view', views.alternate_view, name='alternate_view')
 ]

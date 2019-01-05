@@ -80,11 +80,11 @@ def pad_row(row):
     return row
 
 
-def results_visitor_if(request, what_if=0):
-    return results(request, -what_if)
-
-
 def results(request, what_if=0):
+    try:
+        what_if = int(request.GET.get('what_if'))
+    except (ValueError, KeyError, TypeError):
+        pass
     update_started()
     try:
         pick_set = PickSet.objects.get(name=request.user.username)
