@@ -101,12 +101,15 @@ def results(request, whatif=0):
     row = pad_row(row)
     for i in range(4):
         if finished[i]:
-            if result[i] > 0:
-                team = round_1_matchups[i][1]
-            else:
-                team = round_1_matchups[i][0]
             column = 2 * i + 2
-            row[column] = team + ' by ' + str(abs(result[i]))
+            if results_pref == 0:
+                if result[i] > 0:
+                    team = round_1_matchups[i][1]
+                else:
+                    team = round_1_matchups[i][0]
+                row[column] = team + ' by ' + str(abs(result[i]))
+            else:
+                row[column] = result[i]
     data.append(row)
 
     row = ['']
