@@ -4,6 +4,12 @@
 
 {% block pagebody %}
   <h3>Week 1</h3>
+  {% if game_1_started %}
+  <form method="POST" action="/picks/alternate_view">
+    <input type="submit" id="alternate" value="Switch view of picks (phrases or bare signed integers)"/>
+    {% csrf_token %}
+  </form>
+  {% endif %}
   <table id="week_1_table" cellpadding="4">
     {% for row in data %}
     <tr>

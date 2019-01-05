@@ -30,6 +30,14 @@ def update_started():
         started[3] = True
 
 
+@login_required
+def alternate_view(request):
+    pick_set = PickSet.objects.get(name=request.user.username)
+    pick_set.results_preference = 1 - pick_set.results_preference
+    pick_set.save()
+    return redirect('/picks/results/')
+
+
 def signup(request):
     update_started()
     if started[0]:
@@ -79,7 +87,6 @@ def results(request, whatif=0):
         results_pref = pick_set.results_preference
     except PickSet.DoesNotExist:
         results_pref = 0
-    results_pref = 0
 
     data = [
         [
@@ -147,7 +154,9 @@ def results(request, whatif=0):
         else:
             data.append(row)
 
-    return render(request, 'results.html', {'data': data, 'whatif': True})
+    return render(request, 'results.html', {
+        'data': data, 'whatif': True, 'game_1_started': started[0]
+    })
 
 
 def profile(request):
