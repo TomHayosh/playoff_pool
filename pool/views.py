@@ -48,8 +48,6 @@ def signup(request):
                 round_1_game_4=6,
             )
             return redirect('/picks/edit')
-        else:
-            return redirect(f'/')
     else:
         form = SignUpForm()
     return render(request, 'signup.html', {'form': form})
@@ -74,6 +72,13 @@ def pad_row(row):
 
 def results(request, whatif=0):
     update_started()
+    try:
+        pick_set = PickSet.objects.get(name=request.user.username)
+        results_pref = pick_set.results_preference
+    except PickSet.DoesNotExist:
+        results_pref = 0
+    results_pref = 0
+
     data = [
         [
             '', 'Total score',
@@ -107,8 +112,12 @@ def results(request, whatif=0):
         row = pad_row(row)
         total_score = 0
         if started[0]:
-            row[2] = round_1_matchups[0][pick.round_1_game_1_team]
-            row[2] += ' by ' + str(pick.round_1_game_1)
+            if results_pref == 0:
+                row[2] = round_1_matchups[0][pick.round_1_game_1_team]
+                row[2] += ' by ' + str(pick.round_1_game_1)
+            else:
+                sign = 2 * pick.round_1_game_1_team - 1
+                row[2] = sign * pick.round_1_game_1
             if finished[0]:
                 sign = pick.round_1_game_1_team * 2 - 1
                 signed_pick = sign * pick.round_1_game_1
@@ -116,8 +125,12 @@ def results(request, whatif=0):
                 row[3] = abs(delta)
                 total_score += abs(delta)
         if started[1]:
-            row[4] = round_1_matchups[1][pick.round_1_game_2_team]
-            row[4] += ' by ' + str(pick.round_1_game_2)
+            if results_pref == 0:
+                row[4] = round_1_matchups[1][pick.round_1_game_2_team]
+                row[4] += ' by ' + str(pick.round_1_game_2)
+            else:
+                sign = 2 * pick.round_1_game_2_team - 1
+                row[4] = sign * pick.round_1_game_2
             if finished[1]:
                 sign = pick.round_1_game_2_team * 2 - 1
                 signed_pick = sign * pick.round_1_game_2
@@ -125,8 +138,12 @@ def results(request, whatif=0):
                 row[5] = abs(delta)
                 total_score += abs(delta)
         if started[2]:
-            row[6] = round_1_matchups[2][pick.round_1_game_3_team]
-            row[6] += ' by ' + str(pick.round_1_game_3)
+            if results_pref == 0:
+                row[6] = round_1_matchups[2][pick.round_1_game_3_team]
+                row[6] += ' by ' + str(pick.round_1_game_3)
+            else:
+                sign = 2 * pick.round_1_game_3_team - 1
+                row[6] = sign * pick.round_1_game_3
             if finished[2]:
                 sign = pick.round_1_game_3_team * 2 - 1
                 signed_pick = sign * pick.round_1_game_3
@@ -134,8 +151,12 @@ def results(request, whatif=0):
                 row[7] = abs(delta)
                 total_score += abs(delta)
         if started[3]:
-            row[8] = round_1_matchups[3][pick.round_1_game_4_team]
-            row[8] += ' by ' + str(pick.round_1_game_4)
+            if results_pref == 0:
+                row[8] = round_1_matchups[3][pick.round_1_game_4_team]
+                row[8] += ' by ' + str(pick.round_1_game_4)
+            else:
+                sign = 2 * pick.round_1_game_4_team - 1
+                row[8] = sign * pick.round_1_game_4
             if finished[3]:
                 sign = pick.round_1_game_4_team * 2 - 1
                 signed_pick = sign * pick.round_1_game_4
