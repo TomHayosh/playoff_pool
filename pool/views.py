@@ -14,6 +14,8 @@ round_1_matchups = [
 
 started = [False, False, False, False]
 finished = [False, False, False, False]
+# started = [True, True, True, True]
+# finished = [True, True, True, True]
 result = [24, -7, 10, 256]
 
 
@@ -107,71 +109,44 @@ def results(request, whatif=0):
     boilerplate_len = len(data)
 
     for pick in PickSet.objects.all():
+        teams = [
+            pick.round_1_game_1_team,
+            pick.round_1_game_2_team,
+            pick.round_1_game_3_team,
+            pick.round_1_game_4_team,
+        ]
+        margins = [
+            pick.round_1_game_1,
+            pick.round_1_game_2,
+            pick.round_1_game_3,
+            pick.round_1_game_4,
+        ]
         user = User.objects.get(username=pick.name)
         row = [user.first_name + ' ' + user.last_name]
         row = pad_row(row)
         total_score = 0
-        if started[0]:
-            if results_pref == 0:
-                row[2] = round_1_matchups[0][pick.round_1_game_1_team]
-                row[2] += ' by ' + str(pick.round_1_game_1)
-            else:
-                sign = 2 * pick.round_1_game_1_team - 1
-                row[2] = sign * pick.round_1_game_1
-            if finished[0]:
-                sign = pick.round_1_game_1_team * 2 - 1
-                signed_pick = sign * pick.round_1_game_1
-                delta = signed_pick - result[0]
-                row[3] = abs(delta)
-                total_score += abs(delta)
-        if started[1]:
-            if results_pref == 0:
-                row[4] = round_1_matchups[1][pick.round_1_game_2_team]
-                row[4] += ' by ' + str(pick.round_1_game_2)
-            else:
-                sign = 2 * pick.round_1_game_2_team - 1
-                row[4] = sign * pick.round_1_game_2
-            if finished[1]:
-                sign = pick.round_1_game_2_team * 2 - 1
-                signed_pick = sign * pick.round_1_game_2
-                delta = signed_pick - result[1]
-                row[5] = abs(delta)
-                total_score += abs(delta)
-        if started[2]:
-            if results_pref == 0:
-                row[6] = round_1_matchups[2][pick.round_1_game_3_team]
-                row[6] += ' by ' + str(pick.round_1_game_3)
-            else:
-                sign = 2 * pick.round_1_game_3_team - 1
-                row[6] = sign * pick.round_1_game_3
-            if finished[2]:
-                sign = pick.round_1_game_3_team * 2 - 1
-                signed_pick = sign * pick.round_1_game_3
-                delta = signed_pick - result[2]
-                row[7] = abs(delta)
-                total_score += abs(delta)
-        if started[3]:
-            if results_pref == 0:
-                row[8] = round_1_matchups[3][pick.round_1_game_4_team]
-                row[8] += ' by ' + str(pick.round_1_game_4)
-            else:
-                sign = 2 * pick.round_1_game_4_team - 1
-                row[8] = sign * pick.round_1_game_4
-            if finished[3]:
-                sign = pick.round_1_game_4_team * 2 - 1
-                signed_pick = sign * pick.round_1_game_4
-                delta = signed_pick - result[3]
-                row[9] = abs(delta)
-                total_score += abs(delta)
+        for i in range(4):
+            if started[i]:
+                sign = 2 * teams[i] - 1
+                signed_pick = sign * margins[i]
+                if results_pref == 0:
+                    row[i * 2 + 2] = round_1_matchups[i][teams[i]]
+                    row[i * 2 + 2] += ' by ' + str(margins[i])
+                else:
+                    row[i * 2 + 2] = signed_pick
+                if finished[i]:
+                    delta = signed_pick - result[i]
+                    row[i * 2 + 3] = abs(delta)
+                    total_score += abs(delta)
         row[1] = total_score
-        row_added = False
+
         for i in range(boilerplate_len, len(data)):
             if row[1] < data[i][1]:
                 data.insert(i, row)
-                row_added = True
                 break
-        if not row_added:
+        else:
             data.append(row)
+
     return render(request, 'results.html', {'data': data, 'whatif': True})
 
 
