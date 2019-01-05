@@ -80,7 +80,11 @@ def pad_row(row):
     return row
 
 
-def results(request, whatif=0):
+def results_visitor_if(request, what_if=0):
+    return results(request, -what_if)
+
+
+def results(request, what_if=0):
     update_started()
     try:
         pick_set = PickSet.objects.get(name=request.user.username)
@@ -100,8 +104,8 @@ def results(request, whatif=0):
     row = ['Actual result']
     row = pad_row(row)
     for i in range(4):
+        column = 2 * i + 2
         if finished[i]:
-            column = 2 * i + 2
             if results_pref == 0:
                 if result[i] > 0:
                     team = round_1_matchups[i][1]
@@ -110,6 +114,15 @@ def results(request, whatif=0):
                 row[column] = team + ' by ' + str(abs(result[i]))
             else:
                 row[column] = result[i]
+        elif started[i] and (i == 0 or finished[i - 1]) and what_if != 0:
+            if results_pref == 0:
+                if what_if > 0:
+                    team = round_1_matchups[i][1]
+                else:
+                    team = round_1_matchups[i][0]
+                row[column] = 'If ' + team + ' by ' + str(abs(what_if))
+            else:
+                row[column] = 'If ' + str(what_if)
     data.append(row)
 
     row = ['']
@@ -146,6 +159,10 @@ def results(request, whatif=0):
                     row[i * 2 + 2] = signed_pick
                 if finished[i]:
                     delta = signed_pick - result[i]
+                    row[i * 2 + 3] = abs(delta)
+                    total_score += abs(delta)
+                elif (i == 0 or finished[i - 1]) and what_if != 0:
+                    delta = signed_pick - what_if
                     row[i * 2 + 3] = abs(delta)
                     total_score += abs(delta)
         row[1] = total_score
