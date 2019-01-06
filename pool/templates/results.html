@@ -9,6 +9,8 @@
     <input type="submit" id="alternate" value="Switch view of picks (phrases or signed integers)"/>
     {% csrf_token %}
   </form>
+  {% endif %}
+  {% if game_3_started %}
   <br/>
   <form method="GET" action="./">
     Enter a projected score for the active game (use negative numbers for visiting team):

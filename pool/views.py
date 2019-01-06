@@ -175,7 +175,8 @@ def results(request, what_if=0):
             data.append(row)
 
     return render(request, 'results.html', {
-        'data': data, 'whatif': True, 'game_1_started': started[2]
+        'data': data, 'whatif': True, 'game_1_started': started[0],
+        'game_3_started': started[2],
     })
 
 
