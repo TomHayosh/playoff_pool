@@ -13,10 +13,10 @@ round_1_matchups = [
 ]
 
 started = [False, False, False, False]
-finished = [False, False, False, False]
+finished = [True, False, False, False]
 # started = [True, True, True, True]
 # finished = [True, True, True, True]
-result = [24, -7, 10, 256]
+result = [-14, -7, 10, 256]
 
 
 def update_started():
