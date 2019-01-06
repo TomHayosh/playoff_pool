@@ -12,6 +12,8 @@ round_1_matchups = [
     ['Eagles', 'Bears'],
 ]
 
+current_matchups = round_1_matchups
+
 started = [False, False, False, False]
 finished = [True, True, False, False]
 # started = [True, True, True, True]
@@ -95,10 +97,10 @@ def results(request, what_if=0):
     data = [
         [
             '', 'Total score',
-            'Colts at Texans', '',
-            'Seahawks at Cowboys', '',
-            'Chargers at Ravens', '',
-            'Eagles at Bears', '',
+            current_matchups[0][0] + ' at ' + current_matchups[0][1], '',
+            current_matchups[1][0] + ' at ' + current_matchups[1][1], '',
+            current_matchups[2][0] + ' at ' + current_matchups[2][1], '',
+            current_matchups[3][0] + ' at ' + current_matchups[3][1], '',
         ]
     ]
     row = ['Actual result']
@@ -205,6 +207,14 @@ def view_picks(request):
         'pick_set': pick_set,
         'first_name': request.user.first_name,
         'last_name': request.user.last_name,
+        'r1g1v': current_matchups[0][0],
+        'r1g1h': current_matchups[0][1],
+        'r1g2v': current_matchups[1][0],
+        'r1g2h': current_matchups[1][1],
+        'r1g3v': current_matchups[2][0],
+        'r1g3h': current_matchups[2][1],
+        'r1g4v': current_matchups[3][0],
+        'r1g4h': current_matchups[3][1],
     })
 
 
@@ -239,6 +249,14 @@ def edit_picks(request):
         'game_2_open': not started[1],
         'game_3_open': not started[2],
         'game_4_open': not started[3],
+        'r1g1v': current_matchups[0][0],
+        'r1g1h': current_matchups[0][1],
+        'r1g2v': current_matchups[1][0],
+        'r1g2h': current_matchups[1][1],
+        'r1g3v': current_matchups[2][0],
+        'r1g3h': current_matchups[2][1],
+        'r1g4v': current_matchups[3][0],
+        'r1g4h': current_matchups[3][1],
     })
 
 
