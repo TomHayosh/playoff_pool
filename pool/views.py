@@ -103,6 +103,12 @@ def results(request, what_if=0):
             current_matchups[3][0] + ' at ' + current_matchups[3][1], '',
         ]
     ]
+    data2 = [
+        [
+            '', 'Total score',
+            'Points behind', 'Super Bowl points behind',
+        ]
+    ]
     row = ['Actual result']
     row = pad_row(row)
     for i in range(4):
@@ -130,6 +136,7 @@ def results(request, what_if=0):
     row = ['']
     row = pad_row(row)
     data.append(row)
+    data2.append(row[:4])
 
     boilerplate_len = len(data)
 
@@ -169,16 +176,26 @@ def results(request, what_if=0):
                     total_score += abs(delta)
         row[1] = total_score
 
+        pbrow = row[:4]
         for i in range(boilerplate_len, len(data)):
             if row[1] < data[i][1]:
                 data.insert(i, row)
+                data2.insert(i - 1, pbrow)
                 break
         else:
             data.append(row)
+            data2.append(pbrow)
+        for i in range(boilerplate_len - 1, len(data2)):
+            data2[i][2] = data2[i][1] - data2[2][1]
+            data2[i][3] = str(int(data2[i][2] / 4 + .75))
+            if (int(data2[i][2] / 4 + .75)) * 4 == data2[i][2]:
+                if data2[i][2] > 0:
+                    data2[i][3] += ' to tie'
 
     return render(request, 'results.html', {
         'data': data, 'whatif': True, 'game_1_started': started[0],
         'game_3_started': started[2],
+        'data2': data2,
     })
 
 
