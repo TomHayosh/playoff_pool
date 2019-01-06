@@ -15,10 +15,10 @@ round_1_matchups = [
 current_matchups = round_1_matchups
 
 started = [False, False, False, False]
-finished = [True, True, False, False]
+finished = [True, True, True, False]
 # started = [True, True, True, True]
 # finished = [True, True, True, True]
-result = [-14, 2, 10, 256]
+result = [-14, 2, -6, 256]
 
 
 def update_started():
@@ -194,7 +194,7 @@ def results(request, what_if=0):
 
     return render(request, 'results.html', {
         'data': data, 'whatif': True, 'game_1_started': started[0],
-        'game_3_started': started[2],
+        'game_3_started': started[3],
         'data2': data2,
     })
 
