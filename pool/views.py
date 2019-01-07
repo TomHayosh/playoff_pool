@@ -6,10 +6,14 @@ from pool.models import PickSet
 import datetime
 
 round_1_matchups = [
-    ['Colts', 'Texans', '3:35 CST Saturday, January 5, NBC'],
-    ['Seahawks', 'Cowboys', '7:15 CST Saturday, January 5, FOX'],
-    ['Chargers', 'Ravens', '12:05 CST Sunday, January 6, CBS'],
-    ['Eagles', 'Bears', '3:35 CST Sunday, January 6, ESPN'],
+    ['Colts', 'Texans', datetime.datetime(2019, 1, 5, 15, 30), 'NBC'],
+    # ['Colts', 'Texans', '3:35 CST Saturday, January 5, NBC'],
+    ['Seahawks', 'Cowboys', datetime.datetime(2019, 1, 5, 19, 10), 'FOX'],
+    # ['Seahawks', 'Cowboys', '7:15 CST Saturday, January 5, FOX'],
+    ['Chargers', 'Ravens', datetime.datetime(2019, 1, 6, 12, 00), 'CBS'],
+    # ['Chargers', 'Ravens', '12:05 CST Sunday, January 6, CBS'],
+    ['Eagles', 'Bears', datetime.datetime(2019, 1, 6, 15, 30), 'ESPN'],
+    # ['Eagles', 'Bears', '3:35 CST Sunday, January 6, ESPN'],
 ]
 
 current_matchups = round_1_matchups
@@ -21,15 +25,20 @@ finished = [True, True, True, True]
 result = [-14, 2, -6, -1]
 
 
+def date_string(dt):
+    hour = (dt.hour + -1) % 12 + 1
+    daynum = dt.day
+    return dt.strftime(str(hour) + ':%M ' + 'CST' + ' %A, %B, ' + str(daynum))
+
+
+def kickoff(game):
+    return date_string(game[2]) + ' ' + game[3]
+
+
 def update_started():
-    if datetime.datetime.now() > datetime.datetime(2019, 1, 5, 21, 30):
-        started[0] = True
-    if datetime.datetime.now() > datetime.datetime(2019, 1, 6, 1, 10):
-        started[1] = True
-    if datetime.datetime.now() > datetime.datetime(2019, 1, 6, 18, 00):
-        started[2] = True
-    if datetime.datetime.now() > datetime.datetime(2019, 1, 6, 21, 30):
-        started[3] = True
+    for i in range(4):
+        if datetime.datetime.now() > round_1_matchups[i][2]:
+            started[i] = True
 
 
 @login_required
@@ -232,10 +241,10 @@ def view_picks(request):
         'r1g3h': current_matchups[2][1],
         'r1g4v': current_matchups[3][0],
         'r1g4h': current_matchups[3][1],
-        'r1g1ko': current_matchups[0][2],
-        'r1g2ko': current_matchups[1][2],
-        'r1g3ko': current_matchups[2][2],
-        'r1g4ko': current_matchups[3][2],
+        'r1g1ko': kickoff(current_matchups[0]),
+        'r1g2ko': kickoff(current_matchups[1]),
+        'r1g3ko': kickoff(current_matchups[2]),
+        'r1g4ko': kickoff(current_matchups[3]),
     })
 
 
@@ -278,10 +287,10 @@ def edit_picks(request):
         'r1g3h': current_matchups[2][1],
         'r1g4v': current_matchups[3][0],
         'r1g4h': current_matchups[3][1],
-        'r1g1ko': current_matchups[0][2],
-        'r1g2ko': current_matchups[1][2],
-        'r1g3ko': current_matchups[2][2],
-        'r1g4ko': current_matchups[3][2],
+        'r1g1ko': kickoff(current_matchups[0]),
+        'r1g2ko': kickoff(current_matchups[1]),
+        'r1g3ko': kickoff(current_matchups[2]),
+        'r1g4ko': kickoff(current_matchups[3]),
     })
 
 
