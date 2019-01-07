@@ -19,13 +19,13 @@ divisional_matchups = [
     ['Eagles', 'Saints', datetime.datetime(2019, 1, 13, 15, 35), 'FOX'],
 ]
 
-current_matchups = round_1_matchups
-# current_matchups = divisional_matchups
+# current_matchups = round_1_matchups
+current_matchups = divisional_matchups
 
 current_pick_set_object = PickSet
 
 started = [False, False, False, False]
-finished = [True, True, True, True]
+finished = [False, False, False, False]
 # started = [True, True, True, True]
 # finished = [True, True, True, True]
 result = [-14, 2, -6, -1]
@@ -71,10 +71,10 @@ def signup(request):
             login(request, user)
             pick_set = current_pick_set_object.objects.create(
                 name=user.username,
-                round_1_game_1=1,
-                round_1_game_2=2,
-                round_1_game_3=3,
-                round_1_game_4=6,
+                round_1_game_1=6,  # 1,
+                round_1_game_2=5,  # 2,
+                round_1_game_3=5,  # 3,
+                round_1_game_4=11,  # 6,
             )
             return redirect('/picks/edit')
     else:
@@ -99,7 +99,32 @@ def pad_row(row):
     return row
 
 
+def migrate_picks():
+    for pick_set in PickSet.objects.all():
+        if (pick_set.round_1_game_1 == 1000):
+            return
+    for pick_set in PickSet.objects.all():
+        pick_set.wc_game_1_team = pick_set.round_1_game_1_team
+        pick_set.wc_game_2_team = pick_set.round_1_game_2_team
+        pick_set.wc_game_3_team = pick_set.round_1_game_3_team
+        pick_set.wc_game_4_team = pick_set.round_1_game_4_team
+        pick_set.wc_game_1 = pick_set.round_1_game_1
+        pick_set.wc_game_2 = pick_set.round_1_game_2
+        pick_set.wc_game_3 = pick_set.round_1_game_3
+        pick_set.wc_game_4 = pick_set.round_1_game_4
+        pick_set.round_1_game_1_team = 1
+        pick_set.round_1_game_2_team = 1
+        pick_set.round_1_game_3_team = 1
+        pick_set.round_1_game_4_team = 1
+        pick_set.round_1_game_1 = 1000
+        pick_set.round_1_game_2 = 5
+        pick_set.round_1_game_3 = 5
+        pick_set.round_1_game_4 = 11
+        pick_set.save()
+
+
 def results(request, what_if=0):
+    migrate_picks()
     try:
         what_if = int(request.GET.get('what_if'))
     except (ValueError, KeyError, TypeError):
