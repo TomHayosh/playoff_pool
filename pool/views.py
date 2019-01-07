@@ -194,7 +194,7 @@ def results(request, what_if=0):
 
     return render(request, 'results.html', {
         'data': data, 'whatif': True, 'game_1_started': started[0],
-        'game_3_started': started[3],
+        'game_3_started': false,
         'data2': data2,
     })
 
