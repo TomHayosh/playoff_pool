@@ -6,10 +6,10 @@ from pool.models import PickSet
 import datetime
 
 round_1_matchups = [
-    ['Colts', 'Texans'],
-    ['Seahawks', 'Cowboys'],
-    ['Chargers', 'Ravens'],
-    ['Eagles', 'Bears'],
+    ['Colts', 'Texans', '3:35 CST Saturday, January 5, NBC'],
+    ['Seahawks', 'Cowboys', '7:15 CST Saturday, January 5, FOX'],
+    ['Chargers', 'Ravens', '12:05 CST Sunday, January 6, CBS'],
+    ['Eagles', 'Bears', '3:35 CST Sunday, January 6, ESPN'],
 ]
 
 current_matchups = round_1_matchups
@@ -232,6 +232,10 @@ def view_picks(request):
         'r1g3h': current_matchups[2][1],
         'r1g4v': current_matchups[3][0],
         'r1g4h': current_matchups[3][1],
+        'r1g1ko': current_matchups[0][2],
+        'r1g2ko': current_matchups[1][2],
+        'r1g3ko': current_matchups[2][2],
+        'r1g4ko': current_matchups[3][2],
     })
 
 
@@ -274,6 +278,10 @@ def edit_picks(request):
         'r1g3h': current_matchups[2][1],
         'r1g4v': current_matchups[3][0],
         'r1g4h': current_matchups[3][1],
+        'r1g1ko': current_matchups[0][2],
+        'r1g2ko': current_matchups[1][2],
+        'r1g3ko': current_matchups[2][2],
+        'r1g4ko': current_matchups[3][2],
     })
 
 

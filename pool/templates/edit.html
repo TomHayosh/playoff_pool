@@ -12,7 +12,7 @@
                 <option value="1"{% if pick_set.round_1_game_1_team == 1 %} selected="selected"{% endif %}>{{ r1g1h }}</option>
               </select>
               <input type="number" id="game_1" name="game_1_pick" min="1" value="{{ pick_set.round_1_game_1 }}"/>
-              <p>3:35 CST Saturday, January 5, NBC</p>
+              <p>{{ r1g1ko }}</p>
             {% else %}
               <p>Picks can no longer be changed for the {{ r1g1v }}-{{ r1g1h }} game</p>
             {% endif %}
@@ -24,7 +24,7 @@
                 <option value="1"{% if pick_set.round_1_game_2_team == 1 %} selected="selected"{% endif %}>{{ r1g2h }}</option>
               </select>
               <input type="number" id="game_2" name="game_2_pick" min="1" value="{{ pick_set.round_1_game_2 }}"/>
-              <p>7:15 CST Saturday, January 5, FOX</p>
+              <p>{{ r1g2ko }}</p>
             {% else %}
               <p>Picks can no longer be changed for the {{ r1g2v }}-{{ r1g2h }} game</p>
             {% endif %}
@@ -36,7 +36,7 @@
                 <option value="1"{% if pick_set.round_1_game_3_team == 1 %} selected="selected"{% endif %}>{{ r1g3h }}</option>
               </select>
               <input type="number" id="game_3" name="game_3_pick" min="1" value="{{ pick_set.round_1_game_3 }}"/>
-              <p>12:05 CST Sunday, January 6, CBS</p>
+              <p>{{ r1g3ko }}</p>
             {% else %}
               <p>Picks can no longer be changed for the {{ r1g3v }}-{{ r1g3h }} game</p>
             {% endif %}
@@ -47,7 +47,7 @@
                 <option value="1"{% if pick_set.round_1_game_4_team == 1 %} selected="selected"{% endif %}>{{ r1g4h }}</option>
               </select>
               <input type="number" id="game_4" name="game_4_pick" min="1" value="{{ pick_set.round_1_game_4 }}"/>
-              <p>3:35 CST Sunday, January 6, ESPN</p>
+              <p>{{ r1g4ko }}</p>
             </div>
             <br/>
             <input type="submit" value="Submit picks"/>
