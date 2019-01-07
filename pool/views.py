@@ -37,7 +37,7 @@ def kickoff(game):
 
 def update_started():
     for i in range(4):
-        if datetime.datetime.now() > round_1_matchups[i][2]:
+        if datetime.datetime.now() > current_matchups[i][2]:
             started[i] = True
 
 
@@ -75,7 +75,7 @@ def signup(request):
 
 
 def lookup(matchup, key):
-    return round_1_matchups[key]
+    return current_matchups[key]
 
 
 def pad_row(row):
@@ -125,18 +125,18 @@ def results(request, what_if=0):
         if finished[i]:
             if results_pref == 0:
                 if result[i] > 0:
-                    team = round_1_matchups[i][1]
+                    team = current_matchups[i][1]
                 else:
-                    team = round_1_matchups[i][0]
+                    team = current_matchups[i][0]
                 row[column] = team + ' by ' + str(abs(result[i]))
             else:
                 row[column] = result[i]
         elif started[i] and (i == 0 or finished[i - 1]) and what_if != 0:
             if results_pref == 0:
                 if what_if > 0:
-                    team = round_1_matchups[i][1]
+                    team = current_matchups[i][1]
                 else:
-                    team = round_1_matchups[i][0]
+                    team = current_matchups[i][0]
                 row[column] = 'If ' + team + ' by ' + str(abs(what_if))
             else:
                 row[column] = 'If ' + str(what_if)
@@ -171,7 +171,7 @@ def results(request, what_if=0):
                 sign = 2 * teams[i] - 1
                 signed_pick = sign * margins[i]
                 if results_pref == 0:
-                    row[i * 2 + 2] = round_1_matchups[i][teams[i]]
+                    row[i * 2 + 2] = current_matchups[i][teams[i]]
                     row[i * 2 + 2] += ' by ' + str(margins[i])
                 else:
                     row[i * 2 + 2] = signed_pick
