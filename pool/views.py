@@ -7,16 +7,22 @@ import datetime
 
 round_1_matchups = [
     ['Colts', 'Texans', datetime.datetime(2019, 1, 5, 15, 30), 'NBC'],
-    # ['Colts', 'Texans', '3:35 CST Saturday, January 5, NBC'],
     ['Seahawks', 'Cowboys', datetime.datetime(2019, 1, 5, 19, 10), 'FOX'],
-    # ['Seahawks', 'Cowboys', '7:15 CST Saturday, January 5, FOX'],
     ['Chargers', 'Ravens', datetime.datetime(2019, 1, 6, 12, 00), 'CBS'],
-    # ['Chargers', 'Ravens', '12:05 CST Sunday, January 6, CBS'],
     ['Eagles', 'Bears', datetime.datetime(2019, 1, 6, 15, 30), 'ESPN'],
-    # ['Eagles', 'Bears', '3:35 CST Sunday, January 6, ESPN'],
+]
+
+divisional_matchups = [
+    ['Colts', 'Chiefs', datetime.datetime(2019, 1, 12, 15, 30), 'NBC'],
+    ['Cowboys', 'Rams', datetime.datetime(2019, 1, 12, 19, 10), 'FOX'],
+    ['Chargers', 'Patriots', datetime.datetime(2019, 1, 13, 12, 00), 'CBS'],
+    ['Eagles', 'Saints', datetime.datetime(2019, 1, 13, 15, 35), 'FOX'],
 ]
 
 current_matchups = round_1_matchups
+# current_matchups = divisional_matchups
+
+current_pick_set_object = PickSet
 
 started = [False, False, False, False]
 finished = [True, True, True, True]
@@ -28,7 +34,9 @@ result = [-14, 2, -6, -1]
 def date_string(dt):
     hour = (dt.hour + -1) % 12 + 1
     daynum = dt.day
-    return dt.strftime(str(hour) + ':%M ' + 'CST' + ' %A, %B, ' + str(daynum))
+    return dt.strftime(
+        str(hour) + ':%M %p ' + 'CST' + ' %A, %B, ' + str(daynum)
+    )
 
 
 def kickoff(game):
@@ -43,7 +51,7 @@ def update_started():
 
 @login_required
 def alternate_view(request):
-    pick_set = PickSet.objects.get(name=request.user.username)
+    pick_set = current_pick_set_object.objects.get(name=request.user.username)
     pick_set.results_preference = 1 - pick_set.results_preference
     pick_set.save()
     return redirect('/picks/results/')
@@ -61,7 +69,7 @@ def signup(request):
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=username, password=raw_password)
             login(request, user)
-            pick_set = PickSet.objects.create(
+            pick_set = current_pick_set_object.objects.create(
                 name=user.username,
                 round_1_game_1=1,
                 round_1_game_2=2,
@@ -98,9 +106,11 @@ def results(request, what_if=0):
         pass
     update_started()
     try:
-        pick_set = PickSet.objects.get(name=request.user.username)
+        pick_set = current_pick_set_object.objects.get(
+            name=request.user.username
+        )
         results_pref = pick_set.results_preference
-    except PickSet.DoesNotExist:
+    except current_pick_set_object.DoesNotExist:
         results_pref = 0
 
     data = [
@@ -149,7 +159,7 @@ def results(request, what_if=0):
 
     boilerplate_len = len(data)
 
-    for pick in PickSet.objects.all():
+    for pick in current_pick_set_object.objects.all():
         teams = [
             pick.round_1_game_1_team,
             pick.round_1_game_2_team,
@@ -222,9 +232,11 @@ def home_page(request):
 def view_picks(request):
     template_to_use = 'picks.html'
     try:
-        pick_set = PickSet.objects.get(name=request.user.username)
-    except PickSet.DoesNotExist:
-        pick_set = PickSet.objects.create(
+        pick_set = current_pick_set_object.objects.get(
+            name=request.user.username
+        )
+    except current_pick_set_object.DoesNotExist:
+        pick_set = current_pick_set_object.objects.create(
             name=request.user.username,
         )
     if request.user.username != pick_set.name:
@@ -254,7 +266,7 @@ def new_picks(request):
         temp_name = request.POST['player_name']
     except (KeyError, ValueError):
         temp_name = 'No name'
-    pick_set = PickSet.objects.create(
+    pick_set = current_pick_set_object.objects.create(
         name=temp_name,
     )
     return redirect(f'/picks/edit')
@@ -264,9 +276,11 @@ def new_picks(request):
 def edit_picks(request):
     update_started()
     try:
-        pick_set = PickSet.objects.get(name=request.user.username)
-    except PickSet.DoesNotExist:
-        pick_set = PickSet.objects.create(
+        pick_set = current_pick_set_object.objects.get(
+            name=request.user.username
+        )
+    except current_pick_set_object.DoesNotExist:
+        pick_set = current_pick_set_object.objects.create(
             name=request.user.username,
         )
     if request.user.username != pick_set.name:
@@ -296,38 +310,43 @@ def edit_picks(request):
 
 @login_required
 def update_picks(request):
-    pick_set = PickSet.objects.get(name=request.user.username)
-    try:
-        pick_set.round_1_game_1_team = int(request.POST['game_1_team'])
-    except (KeyError, ValueError):
-        pass
-    try:
-        pick_set.round_1_game_1 = int(request.POST['game_1_pick'])
-    except (KeyError, ValueError):
-        pass
-    try:
-        pick_set.round_1_game_2_team = int(request.POST['game_2_team'])
-    except (KeyError, ValueError):
-        pass
-    try:
-        pick_set.round_1_game_2 = int(request.POST['game_2_pick'])
-    except (KeyError, ValueError):
-        pass
-    try:
-        pick_set.round_1_game_3_team = int(request.POST['game_3_team'])
-    except (KeyError, ValueError):
-        pass
-    try:
-        pick_set.round_1_game_3 = int(request.POST['game_3_pick'])
-    except (KeyError, ValueError):
-        pass
-    try:
-        pick_set.round_1_game_4_team = int(request.POST['game_4_team'])
-    except (KeyError, ValueError):
-        pass
-    try:
-        pick_set.round_1_game_4 = int(request.POST['game_4_pick'])
-    except (KeyError, ValueError):
-        pass
+    pick_set = current_pick_set_object.objects.get(name=request.user.username)
+    # FIXME: Test the started conditionals!!!
+    if not started[0]:
+        try:
+            pick_set.round_1_game_1_team = int(request.POST['game_1_team'])
+        except (KeyError, ValueError):
+            pass
+        try:
+            pick_set.round_1_game_1 = int(request.POST['game_1_pick'])
+        except (KeyError, ValueError):
+            pass
+    if not started[1]:
+        try:
+            pick_set.round_1_game_2_team = int(request.POST['game_2_team'])
+        except (KeyError, ValueError):
+            pass
+        try:
+            pick_set.round_1_game_2 = int(request.POST['game_2_pick'])
+        except (KeyError, ValueError):
+            pass
+    if not started[2]:
+        try:
+            pick_set.round_1_game_3_team = int(request.POST['game_3_team'])
+        except (KeyError, ValueError):
+            pass
+        try:
+            pick_set.round_1_game_3 = int(request.POST['game_3_pick'])
+        except (KeyError, ValueError):
+            pass
+    if not started[3]:
+        try:
+            pick_set.round_1_game_4_team = int(request.POST['game_4_team'])
+        except (KeyError, ValueError):
+            pass
+        try:
+            pick_set.round_1_game_4 = int(request.POST['game_4_pick'])
+        except (KeyError, ValueError):
+            pass
     pick_set.save()
     return redirect(f'/picks/')
