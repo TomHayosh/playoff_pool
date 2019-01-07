@@ -124,7 +124,7 @@ def migrate_picks():
 
 
 def results(request, what_if=0):
-    migrate_picks()
+    # migrate_picks()
     try:
         what_if = int(request.GET.get('what_if'))
     except (ValueError, KeyError, TypeError):
