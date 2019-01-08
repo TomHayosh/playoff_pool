@@ -185,6 +185,8 @@ def results(request, what_if=0):
     boilerplate_len = len(data)
 
     for pick in current_pick_set_object.objects.all():
+        if pick.round_1_game_1 == 1000:
+            continue
         teams = [
             pick.round_1_game_1_team,
             pick.round_1_game_2_team,
