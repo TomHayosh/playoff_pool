@@ -4,14 +4,18 @@
 
 {% block pagebody %}
 {% if game_1_started %}
-<p>Thank you for your interest in the 2019 Playoff Pool beta test.</p>
-<p>The first Wild Card week game has started, so no further entries may be added.</p>
-<p>Check this site again on Monday to enter the actual Playoff Pool.</p>
+<p>Thank you for your interest in the 2019 Playoff Pool.</p>
+<p>The first Divisional week game has started, so no further entries may be added.</p>
 {% else %}
-<p>This is a beta test for the new online version of the NFL Playoff Pool</p>
-<p>This test covers the Wild Card weekend games that we do not use in the actual pool. You can participate in the beta test at no cost and with no obligation to join the real pool next week.</p>
-<p>Pick the winner and margin of victory for each game. The goal is to get as close as possible to the actual outcomes, thus to have the lowest score.</p>
-<p>Send feedback to thayosh@gmail.com</p>
+<p>Welcome to the 2019 NFL Playoff Pool</p>
+<p>The pool runs for 3 rounds, Divisional playoffs through Super Bowl.  For each game in the round, you'll pick a winner and a margin of victory.  You accumulate points based on the difference between your predicted margin and the actual outcome.  Points are doubled in Week 2 and multiplied by 4 in the Super Bowl.  The goal is to have the fewest total points at the end.</p>
+<p><b>EXAMPLE:</b> You pick the Patriots to win by 3. They lose by 7. You were off by 10. In the first round, this would cost you 10 points. In the second round, this would cost you 20 points, and in the Super Bowl 40 points.</p>
+<p>Entry fee is $20 and should be paid prior to the first game on Saturday.  Payment can be made via PayPal to thayosh@gmail.com. Please use the friends and family option to avoid PayPal fees being deducted.</p>
+<p><b>PAYOUT:</b></p>
+<p><b>3rd place</b> - Gets the $20 back</p>
+<p><b>2nd place</b> - 30% of the remaining pot.</p>
+<p><b>1st place</b> - 70% of the remaining pot.</p>
+
 {% if user.is_authenticated %}
 {% else %}
     <form method="GET" action="signup/">
