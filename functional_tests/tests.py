@@ -60,6 +60,25 @@ class NewVisitorTest(StaticLiveServerTestCase):
         rows = table.find_elements_by_tag_name('tr')
         self.assertIn(row_text, [row.text for row in rows])
 
+    def test_bad_password_shows_error_on_signup_pgae(self):
+        self.browser.get(self.live_server_url + '/signup/')
+        time.sleep(1)
+        field = self.browser.find_element_by_id('id_username')
+        field.send_keys('testuser1')
+        field = self.browser.find_element_by_id('id_password1')
+        field.send_keys('testuser1')
+        field = self.browser.find_element_by_id('id_password2')
+        field.send_keys('testuser1')
+        field = self.browser.find_element_by_id('id_first_name')
+        field.send_keys('Jeff')
+        field = self.browser.find_element_by_id('id_last_name')
+        field.send_keys('Landers')
+        field.send_keys(Keys.ENTER)
+        time.sleep(1)
+        url = self.browser.current_url
+        self.assertEquals(url, self.live_server_url + '/signup/')
+
+
     def test_player_1_can_start_a_new_pick_set(self):
         # After years of running the playoff pool via email and Excel
         # spreadsheets, it is now managed from the cloud.
