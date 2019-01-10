@@ -124,8 +124,9 @@ def migrate_picks():
         pick_set.save()
 
 
-def results(request, what_if=0, wc_as_1=False):
+def results(request, wc_as_1=False):
     # migrate_picks()
+    what_if = 0
     try:
         what_if = int(request.GET.get('what_if'))
     except (ValueError, KeyError, TypeError):
@@ -271,14 +272,15 @@ def results(request, what_if=0, wc_as_1=False):
     return render(request, 'results.html', {
         'data': data, 'whatif': True, 'game_1_started': started[0],
         # The game_3_started variable really should be show_what_if
-        'game_3_started': False,
-        # 'game_3_started': True,
+        'game_3_started': started[0] and not finished[3],
+        # 'game_3_started': False,
         'data2': data2,
     })
 
 
 def results_week2(request, wc_as_1=False):
     # migrate_picks()
+    what_if = 0
     try:
         what_if = int(request.GET.get('what_if'))
     except (ValueError, KeyError, TypeError):
@@ -424,8 +426,8 @@ def results_week2(request, wc_as_1=False):
     return render(request, 'results.html', {
         'data': data, 'whatif': True, 'game_1_started': started[0],
         # The game_3_started variable really should be show_what_if
-        'game_3_started': False,
-        # 'game_3_started': True,
+        'game_3_started': started[0] and not finished[3],
+        # 'game_3_started': False,
         'data2': data2,
     })
 
