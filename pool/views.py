@@ -30,10 +30,10 @@ current_matchups = divisional_matchups
 
 current_pick_set_object = PickSet
 
-# started = [False, False, False, False]
-# finished = [False, False, False, False]
-started = [True, True, True, True]
-finished = [True, True, True, True]
+started = [False, False, False, False]
+finished = [False, False, False, False]
+# started = [True, True, True, True]
+# finished = [True, True, True, True]
 previous_result = [-14, 2, -6, -1]
 current_result = [6, 5, 5, 11]
 
