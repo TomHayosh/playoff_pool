@@ -13,6 +13,9 @@ wild_card_matchups = [
     ['Chargers', 'Ravens', datetime.datetime(2019, 1, 6, 12, 00), 'CBS'],
     ['Eagles', 'Bears', datetime.datetime(2019, 1, 6, 15, 30), 'ESPN'],
 ]
+wild_card_starts = [True, True, True, True]
+wild_card_finished = [True, True, True, True]
+
 
 divisional_matchups = [
     ['Colts', 'Chiefs', datetime.datetime(2019, 1, 12, 15, 30), 'NBC'],
@@ -20,20 +23,22 @@ divisional_matchups = [
     ['Chargers', 'Patriots', datetime.datetime(2019, 1, 13, 12, 00), 'CBS'],
     ['Eagles', 'Saints', datetime.datetime(2019, 1, 13, 15, 35), 'FOX'],
 ]
+divisional_starts = [False, False, False, False]
+divisional_finished = [False, False, False, False]
+# divisional_starts = [True, True, True, True]
+# divisional_finished = [True, True, True, True]
 
 conference_matchups = [
     ['TBD', 'TBD', datetime.datetime(2019, 1, 20, 12, 00), 'CBS or FOX'],
     ['TBD', 'TBD', datetime.datetime(2019, 1, 20, 15, 35), 'FOX or CBS'],
 ]
+conference_starts = [False, False]
+conference_finished = [False, False]
 
 current_matchups = divisional_matchups
 
 current_pick_set_object = PickSet
 
-started = [False, False, False, False]
-finished = [False, False, False, False]
-# started = [True, True, True, True]
-# finished = [True, True, True, True]
 previous_result = [-14, 2, -6, -1]
 current_result = [6, 5, 5, 11]
 
@@ -50,10 +55,10 @@ def kickoff(game):
     return date_string(game[2]) + ' ' + game[3]
 
 
-def update_started():
+def update_starts():
     for i in range(num_games[0]):
         if datetime.datetime.now() > current_matchups[i][2]:
-            started[i] = True
+            divisional_starts[i] = True
 
 
 @login_required
@@ -65,8 +70,8 @@ def alternate_view(request):
 
 
 def signup(request):
-    update_started()
-    if started[0]:
+    update_starts()
+    if divisional_starts[0]:
         return home_page(request)
     if request.method == 'POST':
         form = SignUpForm(request.POST)
@@ -125,7 +130,7 @@ def results(request, what_if=0, wc_as_1=False):
         what_if = int(request.GET.get('what_if'))
     except (ValueError, KeyError, TypeError):
         pass
-    update_started()
+    update_starts()
     try:
         pick_set = current_pick_set_object.objects.get(
             name=request.user.username
@@ -136,8 +141,12 @@ def results(request, what_if=0, wc_as_1=False):
 
     if wc_as_1:
         the_matchups = wild_card_matchups
+        started = wild_card_starts
+        finished = wild_card_finished
     else:
         the_matchups = divisional_matchups
+        started = divisional_starts
+        finished = divisional_finished
     data = [
         [
             '', 'Total score',
@@ -261,7 +270,9 @@ def results(request, what_if=0, wc_as_1=False):
 
     return render(request, 'results.html', {
         'data': data, 'whatif': True, 'game_1_started': started[0],
+        # The game_3_started variable really should be show_what_if
         'game_3_started': False,
+        # 'game_3_started': True,
         'data2': data2,
     })
 
@@ -272,7 +283,7 @@ def results_week2(request, wc_as_1=False):
         what_if = int(request.GET.get('what_if'))
     except (ValueError, KeyError, TypeError):
         pass
-    update_started()
+    update_starts()
     try:
         pick_set = current_pick_set_object.objects.get(
             name=request.user.username
@@ -284,8 +295,12 @@ def results_week2(request, wc_as_1=False):
     if wc_as_1:
         # Diff from results
         the_matchups = divisional_matchups
+        started = divisional_starts
+        finished = divisional_finished
     else:
         the_matchups = conference_matchups
+        started = conference_starts
+        finished = conference_finished
         # End diff from results
     data = [
         [
@@ -308,9 +323,7 @@ def results_week2(request, wc_as_1=False):
     else:
         result = current_result
     for i in range(num_games[1]):
-        # Diff from results
         column = 2 * i + h_boilerplate
-        # End diff
         if finished[i]:
             if results_pref == 0:
                 if result[i] > 0:
@@ -410,7 +423,9 @@ def results_week2(request, wc_as_1=False):
 
     return render(request, 'results.html', {
         'data': data, 'whatif': True, 'game_1_started': started[0],
+        # The game_3_started variable really should be show_what_if
         'game_3_started': False,
+        # 'game_3_started': True,
         'data2': data2,
     })
 
@@ -429,8 +444,10 @@ def profile(request):
 
 # Create your views here.
 def home_page(request):
-    update_started()
-    return render(request, 'home.html', {'game_1_started': started[0]})
+    update_starts()
+    return render(request, 'home.html', {
+        'game_1_started': divisional_starts[0]
+    })
 
 
 @login_required
@@ -479,7 +496,7 @@ def new_picks(request):
 
 @login_required
 def edit_picks(request):
-    update_started()
+    update_starts()
     try:
         pick_set = current_pick_set_object.objects.get(
             name=request.user.username
@@ -490,6 +507,7 @@ def edit_picks(request):
         )
     if request.user.username != pick_set.name:
         return render(request, 'signup.html', {'form': SignUpForm()})
+    started = divisional_starts
     return render(request, 'edit.html', {
         'pick_set': pick_set,
         'first_name': request.user.first_name,
@@ -516,6 +534,7 @@ def edit_picks(request):
 @login_required
 def update_picks(request):
     pick_set = current_pick_set_object.objects.get(name=request.user.username)
+    started = divisional_starts
     # FIXME: Test the started conditionals!!!
     if not started[0]:
         try:
