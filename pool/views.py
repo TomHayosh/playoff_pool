@@ -5,7 +5,9 @@ from pool.forms import SignUpForm, User
 from pool.models import PickSet
 import datetime
 
-round_1_matchups = [
+num_games = (4, 2, 1)
+
+wild_card_matchups = [
     ['Colts', 'Texans', datetime.datetime(2019, 1, 5, 15, 30), 'NBC'],
     ['Seahawks', 'Cowboys', datetime.datetime(2019, 1, 5, 19, 10), 'FOX'],
     ['Chargers', 'Ravens', datetime.datetime(2019, 1, 6, 12, 00), 'CBS'],
@@ -19,16 +21,21 @@ divisional_matchups = [
     ['Eagles', 'Saints', datetime.datetime(2019, 1, 13, 15, 35), 'FOX'],
 ]
 
-# current_matchups = round_1_matchups
+conference_matchups = [
+    ['TBD', 'TBD', datetime.datetime(2019, 1, 20, 12, 00), 'CBS or FOX'],
+    ['TBD', 'TBD', datetime.datetime(2019, 1, 20, 15, 35), 'FOX or CBS'],
+]
+
 current_matchups = divisional_matchups
 
 current_pick_set_object = PickSet
 
-started = [False, False, False, False]
-finished = [False, False, False, False]
-# started = [True, True, True, True]
-# finished = [True, True, True, True]
-result = [-14, 2, -6, -1]
+# started = [False, False, False, False]
+# finished = [False, False, False, False]
+started = [True, True, True, True]
+finished = [True, True, True, True]
+previous_result = [-14, 2, -6, -1]
+current_result = [6, 5, 5, 11]
 
 
 def date_string(dt):
@@ -44,7 +51,7 @@ def kickoff(game):
 
 
 def update_started():
-    for i in range(4):
+    for i in range(num_games[0]):
         if datetime.datetime.now() > current_matchups[i][2]:
             started[i] = True
 
@@ -82,20 +89,9 @@ def signup(request):
     return render(request, 'signup.html', {'form': form})
 
 
-def lookup(matchup, key):
-    return current_matchups[key]
-
-
-def pad_row(row):
-    row.append('')  # For week total
-    row.append('')  # For game 1 pick
-    row.append('')  # For game 1 delta
-    row.append('')  # For game 2 pick
-    row.append('')  # For game 2 delta
-    row.append('')  # For game 3 pick
-    row.append('')  # For game 3 delta
-    row.append('')  # For game 4 pick
-    row.append('')  # For game 4 delta
+def pad_row(row, padding_size):
+    for i in range(padding_size):
+        row.append('')
     return row
 
 
@@ -123,7 +119,7 @@ def migrate_picks():
         pick_set.save()
 
 
-def results(request, what_if=0):
+def results(request, what_if=0, wc_as_1=False):
     # migrate_picks()
     try:
         what_if = int(request.GET.get('what_if'))
@@ -138,15 +134,20 @@ def results(request, what_if=0):
     except current_pick_set_object.DoesNotExist:
         results_pref = 0
 
+    if wc_as_1:
+        the_matchups = wild_card_matchups
+    else:
+        the_matchups = divisional_matchups
     data = [
         [
             '', 'Total score',
-            current_matchups[0][0] + ' at ' + current_matchups[0][1], '',
-            current_matchups[1][0] + ' at ' + current_matchups[1][1], '',
-            current_matchups[2][0] + ' at ' + current_matchups[2][1], '',
-            current_matchups[3][0] + ' at ' + current_matchups[3][1], '',
+            the_matchups[0][0] + ' at ' + the_matchups[0][1], '',
+            the_matchups[1][0] + ' at ' + the_matchups[1][1], '',
+            the_matchups[2][0] + ' at ' + the_matchups[2][1], '',
+            the_matchups[3][0] + ' at ' + the_matchups[3][1], '',
         ]
     ]
+    h_boilerplate = 2
     data2 = [
         [
             '', 'Total score',
@@ -154,71 +155,91 @@ def results(request, what_if=0):
         ]
     ]
     row = ['Actual result']
-    row = pad_row(row)
-    for i in range(4):
-        column = 2 * i + 2
+    row = pad_row(row, len(data[0]) - 1)
+    if wc_as_1:
+        result = previous_result
+    else:
+        result = current_result
+    for i in range(num_games[0]):
+        column = 2 * i + h_boilerplate
         if finished[i]:
             if results_pref == 0:
                 if result[i] > 0:
-                    team = current_matchups[i][1]
+                    team = the_matchups[i][1]
                 else:
-                    team = current_matchups[i][0]
+                    team = the_matchups[i][0]
                 row[column] = team + ' by ' + str(abs(result[i]))
             else:
                 row[column] = result[i]
         elif started[i] and (i == 0 or finished[i - 1]) and what_if != 0:
             if results_pref == 0:
                 if what_if > 0:
-                    team = current_matchups[i][1]
+                    team = the_matchups[i][1]
                 else:
-                    team = current_matchups[i][0]
+                    team = the_matchups[i][0]
                 row[column] = 'If ' + team + ' by ' + str(abs(what_if))
             else:
                 row[column] = 'If ' + str(what_if)
     data.append(row)
 
     row = ['']
-    row = pad_row(row)
+    row = pad_row(row, len(data[0]) - 1)
     data.append(row)
     data2.append(row[:4])
 
     boilerplate_len = len(data)
 
     for pick in current_pick_set_object.objects.all():
-        if pick.round_1_game_1 == 1000:
-            continue
-        teams = [
-            pick.round_1_game_1_team,
-            pick.round_1_game_2_team,
-            pick.round_1_game_3_team,
-            pick.round_1_game_4_team,
-        ]
-        margins = [
-            pick.round_1_game_1,
-            pick.round_1_game_2,
-            pick.round_1_game_3,
-            pick.round_1_game_4,
-        ]
+        if wc_as_1:
+            teams = [
+                pick.wc_game_1_team,
+                pick.wc_game_2_team,
+                pick.wc_game_3_team,
+                pick.wc_game_4_team,
+            ]
+            margins = [
+                pick.wc_game_1,
+                pick.wc_game_2,
+                pick.wc_game_3,
+                pick.wc_game_4,
+            ]
+        else:
+            if pick.round_1_game_1 == 1000:
+                continue
+            teams = [
+                pick.round_1_game_1_team,
+                pick.round_1_game_2_team,
+                pick.round_1_game_3_team,
+                pick.round_1_game_4_team,
+            ]
+            margins = [
+                pick.round_1_game_1,
+                pick.round_1_game_2,
+                pick.round_1_game_3,
+                pick.round_1_game_4,
+            ]
         user = User.objects.get(username=pick.name)
         row = [user.first_name + ' ' + user.last_name]
-        row = pad_row(row)
+        row = pad_row(row, len(data[0]) - 1)
         total_score = 0
-        for i in range(4):
+        for i in range(num_games[0]):
             if started[i]:
                 sign = 2 * teams[i] - 1
                 signed_pick = sign * margins[i]
+                column = i * 2 + h_boilerplate
                 if results_pref == 0:
-                    row[i * 2 + 2] = current_matchups[i][teams[i]]
-                    row[i * 2 + 2] += ' by ' + str(margins[i])
+                    row[column] = the_matchups[i][teams[i]]
+                    row[column] += ' by ' + str(margins[i])
                 else:
-                    row[i * 2 + 2] = signed_pick
+                    row[column] = signed_pick
+                column = i * 2 + h_boilerplate + 1
                 if finished[i]:
                     delta = signed_pick - result[i]
-                    row[i * 2 + 3] = abs(delta)
+                    row[column] = abs(delta)
                     total_score += abs(delta)
                 elif (i == 0 or finished[i - 1]) and what_if != 0:
                     delta = signed_pick - what_if
-                    row[i * 2 + 3] = abs(delta)
+                    row[column] = abs(delta)
                     total_score += abs(delta)
         row[1] = total_score
 
@@ -243,6 +264,163 @@ def results(request, what_if=0):
         'game_3_started': False,
         'data2': data2,
     })
+
+
+def results_week2(request, wc_as_1=False):
+    # migrate_picks()
+    try:
+        what_if = int(request.GET.get('what_if'))
+    except (ValueError, KeyError, TypeError):
+        pass
+    update_started()
+    try:
+        pick_set = current_pick_set_object.objects.get(
+            name=request.user.username
+        )
+        results_pref = pick_set.results_preference
+    except current_pick_set_object.DoesNotExist:
+        results_pref = 0
+
+    if wc_as_1:
+        # Diff from results
+        the_matchups = divisional_matchups
+    else:
+        the_matchups = conference_matchups
+        # End diff from results
+    data = [
+        [
+            '', 'Total score', 'Week 1 subtotal', 'Week 2 score',
+            the_matchups[0][0] + ' at ' + the_matchups[0][1], '',
+            the_matchups[1][0] + ' at ' + the_matchups[1][1], '',
+        ]
+    ]
+    h_boilerplate = 4
+    data2 = [
+        [
+            '', 'Total score',
+            'Points behind', 'Super Bowl points behind',
+        ]
+    ]
+    row = ['Actual result']
+    row = pad_row(row, len(data[0]) - 1)
+    if wc_as_1:
+        result = previous_result
+    else:
+        result = current_result
+    for i in range(num_games[1]):
+        # Diff from results
+        column = 2 * i + h_boilerplate
+        # End diff
+        if finished[i]:
+            if results_pref == 0:
+                if result[i] > 0:
+                    team = the_matchups[i][1]
+                else:
+                    team = the_matchups[i][0]
+                row[column] = team + ' by ' + str(abs(result[i]))
+            else:
+                row[column] = result[i]
+        elif started[i] and (i == 0 or finished[i - 1]) and what_if != 0:
+            if results_pref == 0:
+                if what_if > 0:
+                    team = the_matchups[i][1]
+                else:
+                    team = the_matchups[i][0]
+                row[column] = 'If ' + team + ' by ' + str(abs(what_if))
+            else:
+                row[column] = 'If ' + str(what_if)
+    data.append(row)
+
+    row = ['']
+    row = pad_row(row, len(data[0]) - 1)
+    data.append(row)
+    data2.append(row[:4])
+
+    boilerplate_len = len(data)
+
+    for pick in current_pick_set_object.objects.all():
+        if wc_as_1:
+            teams = [
+                pick.wc_game_1_team,
+                pick.wc_game_2_team,
+                pick.wc_game_3_team,
+                pick.wc_game_4_team,
+            ]
+            margins = [
+                pick.wc_game_1,
+                pick.wc_game_2,
+                pick.wc_game_3,
+                pick.wc_game_4,
+            ]
+        else:
+            if pick.round_1_game_1 == 1000:
+                continue
+            teams = [
+                pick.round_1_game_1_team,
+                pick.round_1_game_2_team,
+                pick.round_1_game_3_team,
+                pick.round_1_game_4_team,
+            ]
+            margins = [
+                pick.round_1_game_1,
+                pick.round_1_game_2,
+                pick.round_1_game_3,
+                pick.round_1_game_4,
+            ]
+        user = User.objects.get(username=pick.name)
+        row = [user.first_name + ' ' + user.last_name]
+        row = pad_row(row, len(data[0]) - 1)
+        total_score = 0
+        for i in range(num_games[1]):
+            if started[i]:
+                sign = 2 * teams[i] - 1
+                signed_pick = sign * margins[i]
+                column = i * 2 + h_boilerplate
+                if results_pref == 0:
+                    row[column] = the_matchups[i][teams[i]]
+                    row[column] += ' by ' + str(margins[i])
+                else:
+                    row[column] = signed_pick
+                column = i * 2 + h_boilerplate + 1
+                if finished[i]:
+                    delta = signed_pick - result[i]
+                    row[column] = abs(delta)
+                    total_score += abs(delta)
+                elif (i == 0 or finished[i - 1]) and what_if != 0:
+                    delta = signed_pick - what_if
+                    row[column] = abs(delta)
+                    total_score += abs(delta)
+        row[1] = total_score
+
+        pbrow = row[:4]
+        for i in range(boilerplate_len, len(data)):
+            if row[1] < data[i][1]:
+                data.insert(i, row)
+                data2.insert(i - 1, pbrow)
+                break
+        else:
+            data.append(row)
+            data2.append(pbrow)
+        for i in range(boilerplate_len - 1, len(data2)):
+            data2[i][2] = data2[i][1] - data2[2][1]
+            data2[i][3] = str(int(data2[i][2] / 4 + .75))
+            if (int(data2[i][2] / 4 + .75)) * 4 == data2[i][2]:
+                if data2[i][2] > 0:
+                    data2[i][3] += ' to tie'
+
+    return render(request, 'results.html', {
+        'data': data, 'whatif': True, 'game_1_started': started[0],
+        'game_3_started': False,
+        'data2': data2,
+    })
+
+
+def round2test1(request):
+    return results(request, wc_as_1=True)
+
+
+def round2test2(request):
+    return results_week2(request, wc_as_1=True)
 
 
 def profile(request):

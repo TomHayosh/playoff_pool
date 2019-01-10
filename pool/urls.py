@@ -22,5 +22,7 @@ urlpatterns = [
     path('update_picks', views.update_picks, name='update_picks'),
     path('edit/', views.edit_picks, name='edit_picks'),
     path('results/', views.results, name='results'),
-    path('alternate_view', views.alternate_view, name='alternate_view')
+    path('alternate_view', views.alternate_view, name='alternate_view'),
+    path('round2test1/', views.round2test1, name='round2test1'),
+    path('round2test2/', views.round2test2, name='round2test2'),
 ]
