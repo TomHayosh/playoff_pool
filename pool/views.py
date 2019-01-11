@@ -285,6 +285,7 @@ def results(request, wc_as_1=False):
                     data2[i][3] += ' to tie'
 
     return render(request, 'results.html', {
+        'playoff_week': 'Week 1',
         'data': data, 'whatif': True, 'game_1_started': started[0],
         # The game_3_started variable really should be show_what_if
         'game_3_started': started[0] and not finished[num_games[0] - 1],
@@ -463,6 +464,7 @@ def results_week2(request, wc_as_1=False):
                     data2[i][3] += ' to tie'
 
     return render(request, 'results.html', {
+        'playoff_week': 'Week 2',
         'data': data, 'whatif': True, 'game_1_started': started[0],
         # The game_3_started variable really should be show_what_if
         'game_3_started': started[0] and not finished[num_games[1] - 1],
