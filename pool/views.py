@@ -227,6 +227,8 @@ def results(request, wc_as_1=False):
     boilerplate_len = len(data)
 
     for pick in current_pick_set_object.objects.all():
+        if pick.round_1_game_1 == 1000:
+            continue
         if wc_as_1:
             teams = [
                 pick.wc_game_1_team,
@@ -241,8 +243,6 @@ def results(request, wc_as_1=False):
                 pick.wc_game_4,
             ]
         else:
-            if pick.round_1_game_1 == 1000:
-                continue
             teams = [
                 pick.round_1_game_1_team,
                 pick.round_1_game_2_team,
@@ -378,6 +378,8 @@ def results_week2(request, wc_as_1=False):
     boilerplate_len = len(data)
 
     for pick in current_pick_set_object.objects.all():
+        if pick.round_1_game_1 == 1000:
+            continue
         if wc_as_1:
             teams = [
                 pick.round_1_game_1_team,
@@ -400,8 +402,6 @@ def results_week2(request, wc_as_1=False):
                 pick.wc_game_4,
             ]
         else:
-            if pick.round_1_game_1 == 1000:
-                continue
             # FIXME: Update values below with conference round picks
             teams = [
                 0,  # pick.round_1_game_1_team,
