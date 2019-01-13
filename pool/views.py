@@ -336,7 +336,7 @@ def results(request, wc_as_1=False):
                 else:
                     row[column] += team + ' by ' + str(abs(result[i]))
             else:
-                row[column] = "In progress: " + result[i]
+                row[column] = "In progress: " + str(result[i])
     data.append(row)
 
     row = ['']
