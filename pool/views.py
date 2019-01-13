@@ -24,11 +24,11 @@ divisional_matchups = [
     ['Chargers', 'Patriots', datetime.datetime(2019, 1, 13, 12, 00), 'CBS'],
     ['Eagles', 'Saints', datetime.datetime(2019, 1, 13, 15, 35), 'FOX'],
 ]
-divisional_starts = [False, False, False, False]
-divisional_finished = [False, False, False, False]
+divisional_starts = [True, False, False, False]
+divisional_finished = [True, False, False, False]
 # divisional_starts = [True, True, True, True]
 # divisional_finished = [True, True, True, True]
-divisional_result = [6, 5, 5, 11]
+divisional_result = [18, 5, 5, 11]
 
 conference_matchups = [
     ['TBD', 'TBD', datetime.datetime(2019, 1, 20, 12, 00), 'CBS or FOX'],
