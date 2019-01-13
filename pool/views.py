@@ -4,8 +4,15 @@ from django.contrib.auth.decorators import login_required
 from pool.forms import SignUpForm, User
 from pool.models import PickSet
 import datetime
+from requests import get
+from requests.exceptions import RequestException
+from contextlib import closing
+from bs4 import BeautifulSoup
+import json
+import time
 
 num_games = (4, 2, 1)
+last_nfl_request = [time.time() - 180]
 
 wild_card_matchups = [
     ['Colts', 'Texans', datetime.datetime(2019, 1, 5, 15, 30), 'NBC'],
@@ -28,6 +35,7 @@ divisional_starts = [True, True, False, False]
 divisional_finished = [True, True, False, False]
 # divisional_starts = [True, True, True, True]
 # divisional_finished = [True, True, True, True]
+# divisional_result = [-19, -19, 5, 11]
 divisional_result = [18, 8, 5, 11]
 
 conference_matchups = [
@@ -149,6 +157,80 @@ def generate_results(
                 row[column] = abs(delta)
                 total_score += abs(delta)
     row[total_col] = total_score
+
+
+def is_good_response(resp):
+    content_type = resp.headers['Content-Type'].lower()
+    print(content_type)
+    return (resp.status_code == 200 and
+            content_type is not None and
+            content_type.find('html') > -1)
+
+
+def simple_get(url):
+    try:
+        with closing(get(url, stream=True)) as resp:
+            if is_good_response(resp):
+                return resp.content
+            else:
+                return None
+    except RequestException as e:
+        print('Error during requests to {0}: {1}'.format(url, str(e)))
+        return None
+
+
+def bjcp_quiz():
+    raw_html = simple_get('https://github.com/gthmb/bjcp-2015-json/blob/master/json/styleguide-2015.min.json')
+    html = BeautifulSoup(raw_html, 'html.parser')
+    content_string = html.decode_contents()
+    print(len(content_string))
+    '''
+    y = json.loads(content_string)
+    print(y.keys())
+    '''
+
+
+def update_request_time():
+    last_nfl_request[0] = time.time()
+    print(f'Request time after {last_nfl_request[0]}')
+
+
+def too_soon_to_request_nfl():
+    print(f'Request time before {last_nfl_request[0]}')
+    seconds_elapsed = time.time() - last_nfl_request[0]
+    print(seconds_elapsed)
+    return seconds_elapsed < 600
+
+
+def scrape_nfl_dot_com_strip():
+    if too_soon_to_request_nfl():
+        # print(f'Returning - only {seconds_elapsed} seconds have passed.')
+        print('Returning')
+        return
+    update_request_time()
+    raw_html = simple_get('https://www.nfl.com/scores/2018/POST1')
+    html = BeautifulSoup(raw_html, 'html.parser')
+    content_string = html.decode_contents()
+    start_location = content_string.find('__INITIAL_DATA__')
+    json_start = content_string.find('{', start_location)
+    json_end = content_string.find('\n', json_start)
+    start_location = content_string.find('__REACT_ROOT_ID__')
+    # Subtract 1 to remove the semicolon that ends the Javascript statement
+    y = json.loads(content_string[json_start: json_end - 1])
+    # print(json.dumps(y))
+    for game in y['uiState']['scoreStripGames']:
+        for i in range(4):
+            if game['awayTeam']['identifier'] == divisional_matchups[i][0]:
+                status = game['status']
+                if not status['isUpcoming']:
+                    if status['phaseDescription'] == 'FINAL':
+                        # print(f"{game['awayTeam']['identifier']} finished")
+                        divisional_finished[i] = True
+                        home_score = game['homeTeam']['scores']['pointTotal']
+                        away_score = game['awayTeam']['scores']['pointTotal']
+                        delta = home_score - away_score
+                        # print(f'Delta is {delta}')
+                        divisional_result[i] = delta
 
 
 def results(request, wc_as_1=False):
@@ -295,6 +377,8 @@ def results(request, wc_as_1=False):
 
 
 def results_week2(request, wc_as_1=False):
+    scrape_nfl_dot_com_strip()
+    # bjcp_quiz()
     # migrate_picks()
     what_if = 0
     try:
