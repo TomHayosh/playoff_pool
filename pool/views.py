@@ -21,6 +21,7 @@ wild_card_matchups = [
     ['Eagles', 'Bears', datetime.datetime(2019, 1, 6, 15, 30), 'ESPN'],
 ]
 wild_card_starts = [True, True, True, True]
+wild_card_in_progress = [False, False, False, False]
 wild_card_finished = [True, True, True, True]
 wild_card_result = [-14, 2, -6, -1]
 
@@ -32,6 +33,7 @@ divisional_matchups = [
     ['Eagles', 'Saints', datetime.datetime(2019, 1, 13, 15, 35), 'FOX'],
 ]
 divisional_starts = [True, True, False, False]
+divisional_in_progress = [False, False, False, False]
 divisional_finished = [True, True, False, False]
 # divisional_starts = [True, True, True, True]
 # divisional_finished = [True, True, True, True]
@@ -43,6 +45,7 @@ conference_matchups = [
     ['TBD', 'TBD', datetime.datetime(2019, 1, 20, 15, 35), 'FOX or CBS'],
 ]
 conference_starts = [False, False]
+conference_in_progress = [False, False, False, False]
 conference_finished = [False, False]
 conference_result = [50, 50]
 
@@ -134,7 +137,7 @@ def migrate_picks():
 
 def generate_results(
     teams, margins, started, finished, what_if, h_boilerplate, result,
-    row, total_col, results_pref, the_matchups, game_count
+    row, total_col, results_pref, the_matchups, game_count, in_progress
 ):
     total_score = 0
     for i in range(game_count):
@@ -154,6 +157,10 @@ def generate_results(
                 total_score += abs(delta)
             elif (i == 0 or finished[i - 1]) and what_if != 0:
                 delta = signed_pick - what_if
+                row[column] = abs(delta)
+                total_score += abs(delta)
+            elif in_progress[i]:
+                delta = signed_pick - result[i]
                 row[column] = abs(delta)
                 total_score += abs(delta)
     row[total_col] = total_score
@@ -199,7 +206,7 @@ def too_soon_to_request_nfl():
     print(f'Request time before {last_nfl_request[0]}')
     seconds_elapsed = time.time() - last_nfl_request[0]
     print(seconds_elapsed)
-    return seconds_elapsed < 600
+    return seconds_elapsed < 10
 
 
 def scrape_nfl_dot_com_strip():
@@ -208,7 +215,7 @@ def scrape_nfl_dot_com_strip():
         print('Returning')
         return
     update_request_time()
-    raw_html = simple_get('https://www.nfl.com/scores/2018/POST1')
+    raw_html = simple_get('https://www.nfl.com/')
     html = BeautifulSoup(raw_html, 'html.parser')
     content_string = html.decode_contents()
     start_location = content_string.find('__INITIAL_DATA__')
@@ -231,6 +238,22 @@ def scrape_nfl_dot_com_strip():
                         delta = home_score - away_score
                         # print(f'Delta is {delta}')
                         divisional_result[i] = delta
+                    in_progress = status['isInProgress']
+                    in_progress_overtime = status['isInProgressOvertime']
+                    if in_progress or in_progress_overtime:
+                        home_score = game['homeTeam']['scores']['pointTotal']
+                        away_score = game['awayTeam']['scores']['pointTotal']
+                        delta = home_score - away_score
+                        # print(f'Delta is {delta}')
+                        divisional_result[i] = delta
+                        divisional_in_progress[i] = True
+                    else:
+                        divisional_in_progress[i] = False
+
+
+def nfl(request):
+    scrape_nfl_dot_com_strip()
+    return results(request)
 
 
 def results(request, wc_as_1=False):
@@ -253,10 +276,12 @@ def results(request, wc_as_1=False):
         the_matchups = wild_card_matchups
         started = wild_card_starts
         finished = wild_card_finished
+        in_progress = wild_card_in_progress
     else:
         the_matchups = divisional_matchups
         started = divisional_starts
         finished = divisional_finished
+        in_progress = divisional_in_progress
     data = [
         [
             '', 'Total score',
@@ -299,6 +324,19 @@ def results(request, wc_as_1=False):
                 row[column] = 'If ' + team + ' by ' + str(abs(what_if))
             else:
                 row[column] = 'If ' + str(what_if)
+        elif not wc_as_1 and in_progress[i]:
+            if results_pref == 0:
+                if result[i] > 0:
+                    team = the_matchups[i][1]
+                else:
+                    team = the_matchups[i][0]
+                row[column] = "In progress: "
+                if result[i] == 0:
+                    row[column] += 'Tied'
+                else:
+                    row[column] += team + ' by ' + str(abs(result[i]))
+            else:
+                row[column] = "In progress: " + result[i]
     data.append(row)
 
     row = ['']
@@ -346,7 +384,7 @@ def results(request, wc_as_1=False):
         generate_results(
             teams, margins, started, finished, what_if, h_boilerplate,
             result, temp_row, total_col, results_pref, the_matchups,
-            num_games[0]
+            num_games[0], in_progress
         )
         row[1:len(data[0])] = temp_row[1:len(data[0])]
 
@@ -377,7 +415,6 @@ def results(request, wc_as_1=False):
 
 
 def results_week2(request, wc_as_1=False):
-    scrape_nfl_dot_com_strip()
     # bjcp_quiz()
     # migrate_picks()
     what_if = 0
@@ -410,6 +447,7 @@ def results_week2(request, wc_as_1=False):
         prev_started = divisional_starts
         prev_finished = divisional_finished
         # End diff from results
+    in_progress = [False, False, False, False]
     data = [
         [
             '', 'Total score', 'Week 1 subtotal', 'Week 2 score',
@@ -516,7 +554,7 @@ def results_week2(request, wc_as_1=False):
         generate_results(
             teams, margins, started, finished, what_if, h_boilerplate,
             result, temp_row, total_col, results_pref, the_matchups,
-            num_games[1]
+            num_games[1], in_progress
         )
         row[1:len(data[0])] = temp_row[1:len(data[0])]
         temp_row = ['']
@@ -526,7 +564,7 @@ def results_week2(request, wc_as_1=False):
         generate_results(
             prev_teams, prev_margins, prev_started, prev_finished, what_if,
             h_boilerplate, prev_result, temp_row, total_col, results_pref,
-            prev_matchups, num_games[0]
+            prev_matchups, num_games[0], in_progress
         )
         row[2] = temp_row[total_col]
         row[1] = row[2] + row[3]
