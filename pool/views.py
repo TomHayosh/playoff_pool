@@ -288,7 +288,7 @@ def results(request, wc_as_1=False):
         'playoff_week': 'Week 1',
         'data': data, 'whatif': True, 'game_1_started': started[0],
         # The game_3_started variable really should be show_what_if
-        'game_3_started': started[0] and not finished[num_games[0] - 1],
+        'game_3_started': started[2] and not finished[num_games[0] - 1],
         # 'game_3_started': False,
         'data2': data2,
     })
