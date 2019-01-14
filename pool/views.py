@@ -41,12 +41,12 @@ divisional_finished = [True, True, True, True]
 divisional_result = [18, 8, 13, 6]
 
 conference_matchups = [
-    ['TBD', 'TBD', datetime.datetime(2019, 1, 20, 12, 00), 'CBS or FOX'],
-    ['TBD', 'TBD', datetime.datetime(2019, 1, 20, 15, 35), 'FOX or CBS'],
+    ['Rams', 'Saints', datetime.datetime(2019, 1, 20, 14, 00), 'FOX'],
+    ['Patriots', 'Chiefs', datetime.datetime(2019, 1, 20, 17, 35), 'CBS'],
 ]
-conference_starts = [False, False]
+conference_starts = [True, True]
 conference_in_progress = [False, False, False, False]
-conference_finished = [False, False]
+conference_finished = [True, True]
 conference_result = [50, 50]
 
 current_matchups = divisional_matchups
@@ -424,6 +424,7 @@ def results(request, wc_as_1=False):
 
 
 def results_week2(request, wc_as_1=False):
+    print('About to do week 2')
     # bjcp_quiz()
     # migrate_picks()
     what_if = 0
@@ -535,12 +536,12 @@ def results_week2(request, wc_as_1=False):
         else:
             # FIXME: Update values below with conference round picks
             teams = [
-                0,  # pick.round_1_game_1_team,
-                0,  # pick.round_1_game_2_team,
+                pick.round_2_game_1_team,
+                pick.round_2_game_2_team,
             ]
             margins = [
-                500,  # pick.round_1_game_1,
-                500,  # pick.round_1_game_2,
+                pick.round_2_game_1,
+                pick.round_2_game_2,
             ]
             prev_teams = [
                 pick.round_1_game_1_team,
