@@ -647,6 +647,8 @@ def view_picks2(request):
         'r2g2h': conference_matchups[1][1],
         'r2g1ko': kickoff(conference_matchups[0]),
         'r2g2ko': kickoff(conference_matchups[1]),
+        'game_1_open': not conference_starts[0],
+        'game_2_open': not conference_starts[1],
     })
 
 
@@ -729,6 +731,33 @@ def edit_picks(request):
         'r1g3ko': kickoff(current_matchups[2]),
         'r1g4ko': kickoff(current_matchups[3]),
     })
+
+
+@login_required
+def update_picks2(request):
+    pick_set = current_pick_set_object.objects.get(name=request.user.username)
+    started = conference_starts
+    # FIXME: Test the started conditionals!!!
+    if not started[0]:
+        try:
+            pick_set.round_2_game_1_team = int(request.POST['game_1_team'])
+        except (KeyError, ValueError):
+            pass
+        try:
+            pick_set.round_2_game_1 = int(request.POST['game_1_pick'])
+        except (KeyError, ValueError):
+            pass
+    if not started[1]:
+        try:
+            pick_set.round_2_game_2_team = int(request.POST['game_2_team'])
+        except (KeyError, ValueError):
+            pass
+        try:
+            pick_set.round_2_game_2 = int(request.POST['game_2_pick'])
+        except (KeyError, ValueError):
+            pass
+    pick_set.save()
+    return redirect(f'/picks/week2/')
 
 
 @login_required

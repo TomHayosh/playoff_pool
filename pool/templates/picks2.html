@@ -6,33 +6,60 @@
 
 {% block pagebody %}
 {% if user.is_authenticated %}
+{% if game_2_open %}
+   <form method="POST" action="/picks/update_picks2">
+{% endif %}
   <ul id="picks_list" class="list-group">
     <li id="pick_1" class="list-group-item">
-      <p>
-        {% if pick_set.round_2_game_1_team == 1 %}<b>{{ r2g1h }}</b>{% else %}<b>{{ r2g1v }}</b>{% endif %} by
-        <b>{{ pick_set.round_2_game_1 }}</b>
-      </p>
+      <div class=col-md-12">
+      {% if game_1_open %}
+        <select id="select_game_1" name='game_1_team'>
+          <option value="0"{% if pick_set.round_2_game_1_team == 0 %} selected="selected"{% endif %}>{{ r2g1v }}</option>
+          <option value="1"{% if pick_set.round_2_game_1_team == 1 %} selected="selected"{% endif %}>{{ r2g1h }}</option>
+        </select>
+        by
+        <input type="number" id="game_1" name="game_1_pick" min="1" value="{{ pick_set.round_2_game_1 }}"/>
+      {% else %}
+        <p>
+          {% if pick_set.round_2_game_1_team == 1 %}<b>{{ r2g1h }}</b>{% else %}<b>{{ r2g1v }}</b>{% endif %} by
+          <b>{{ pick_set.round_2_game_1 }}</b>
+        </p>
+      {% endif %}
       <p>{{ r2g1ko }}</p>
+      </div>
     </li>
     <li id="pick_2" class="list-group-item">
-      <p>
-        {% if pick_set.round_2_game_2_team == 1 %}<b>{{ r2g2h }}</b>{% else %}<b>{{ r2g2v }}</b>{% endif %} by
-        <b>{{ pick_set.round_2_game_2 }}</b>
-      </p>
+      <div class=col-md-12">
+      {% if game_2_open %}
+        <select id="select_game_2" name='game_2_team'>
+          <option value="0"{% if pick_set.round_2_game_2_team == 0 %} selected="selected"{% endif %}>{{ r2g2v }}</option>
+          <option value="1"{% if pick_set.round_2_game_2_team == 1 %} selected="selected"{% endif %}>{{ r2g2h }}</option>
+        </select>
+        by
+        <input type="number" id="game_2" name="game_2_pick" min="1" value="{{ pick_set.round_2_game_2 }}"/>
+      {% else %}
+        <p>
+          {% if pick_set.round_2_game_2_team == 1 %}<b>{{ r2g2h }}</b>{% else %}<b>{{ r2g2v }}</b>{% endif %} by
+          <b>{{ pick_set.round_2_game_2 }}</b>
+        </p>
+      {% endif %}
+      </div>
       <p>{{ r2g2ko }}</p>
     </li>
-    <br/>
-    <form method="GET" action="/picks/edit/">
-      <input type="submit" id="edit_picks" value="Edit Picks"/>
-    </form>
-    <br/>
-    <form method="GET" action="/picks/results_week2/">
-      <input type="submit" id="view_results" value="View Results"/>
-    </form>
-    <br/>
-    <form method="GET" action="{% url 'logout' %}">
-      <input type="submit" id="logout" value="Logout"/>
-    </form>
+  </ul>
+{% if game_2_open %}
+            <input type="submit" value="Submit picks"/>
+            {% csrf_token %}
+   </form>
+{% endif %}
+  <br/>
+  <form method="GET" action="/picks/results_week2/">
+    <input type="submit" id="view_results" value="View Results"/>
+  </form>
+  <br/>
+  <form method="GET" action="{% url 'logout' %}">
+    <input type="submit" id="logout" value="Logout"/>
+  </form>
 {% else %}
   <p>You are not logged in</p>
   <a href="{% url 'login' %}">login</a>
