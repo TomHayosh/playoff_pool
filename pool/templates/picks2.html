@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block header_text %}{{ first_name }} {{ last_name }}'s picks{% endblock %}
+
+{% block form_action %}/picks/{{ pick_set.id }}/update_picks{% endblock %}
+
+{% block pagebody %}
+{% if user.is_authenticated %}
+  <ul id="picks_list" class="list-group">
+    <li id="pick_1" class="list-group-item">
+      <p>
+        {% if pick_set.round_2_game_1_team == 1 %}<b>{{ r2g1h }}</b>{% else %}<b>{{ r2g1v }}</b>{% endif %} by
+        <b>{{ pick_set.round_2_game_1 }}</b>
+      </p>
+      <p>{{ r2g1ko }}</p>
+    </li>
+    <li id="pick_2" class="list-group-item">
+      <p>
+        {% if pick_set.round_2_game_2_team == 1 %}<b>{{ r2g2h }}</b>{% else %}<b>{{ r2g2v }}</b>{% endif %} by
+        <b>{{ pick_set.round_2_game_2 }}</b>
+      </p>
+      <p>{{ r2g2ko }}</p>
+    </li>
+    <br/>
+    <form method="GET" action="/picks/edit/">
+      <input type="submit" id="edit_picks" value="Edit Picks"/>
+    </form>
+    <br/>
+    <form method="GET" action="/picks/results_week2/">
+      <input type="submit" id="view_results" value="View Results"/>
+    </form>
+    <br/>
+    <form method="GET" action="{% url 'logout' %}">
+      <input type="submit" id="logout" value="Logout"/>
+    </form>
+{% else %}
+  <p>You are not logged in</p>
+  <a href="{% url 'login' %}">login</a>
+{% endif %}
+    <!--
+    <a href="mailto:thayosh@gmail.com?subject=Playoff%20Pool%20Feedback%20from%20picks%20page">Send feedback</a>
+    -->
+  </ul>
+{% endblock %}
