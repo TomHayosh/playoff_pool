@@ -68,8 +68,11 @@ def kickoff(game):
 
 def update_starts():
     for i in range(num_games[0]):
-        if datetime.datetime.now() > current_matchups[i][2]:
+        if datetime.datetime.now() > divisional_matchups[i][2]:
             divisional_starts[i] = True
+    for i in range(num_games[1]):
+        if datetime.datetime.now() > conference_matchups[i][2]:
+            conference_starts[i] = True
 
 
 @login_required
