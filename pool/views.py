@@ -44,9 +44,9 @@ conference_matchups = [
     ['Rams', 'Saints', datetime.datetime(2019, 1, 20, 14, 00), 'FOX'],
     ['Patriots', 'Chiefs', datetime.datetime(2019, 1, 20, 17, 35), 'CBS'],
 ]
-conference_starts = [True, True]
+conference_starts = [False, False]
 conference_in_progress = [False, False, False, False]
-conference_finished = [True, True]
+conference_finished = [False, False]
 conference_result = [50, 50]
 
 current_matchups = divisional_matchups
@@ -424,7 +424,6 @@ def results(request, wc_as_1=False):
 
 
 def results_week2(request, wc_as_1=False):
-    print('About to do week 2')
     # bjcp_quiz()
     # migrate_picks()
     what_if = 0
@@ -626,6 +625,32 @@ def home_page(request):
 
 
 @login_required
+def view_picks2(request):
+    template_to_use = 'picks2.html'
+    try:
+        pick_set = current_pick_set_object.objects.get(
+            name=request.user.username
+        )
+    except current_pick_set_object.DoesNotExist:
+        pick_set = current_pick_set_object.objects.create(
+            name=request.user.username,
+        )
+    if request.user.username != pick_set.name:
+        return render(request, 'signup.html', {'form': SignUpForm()})
+    return render(request, template_to_use, {
+        'pick_set': pick_set,
+        'first_name': request.user.first_name,
+        'last_name': request.user.last_name,
+        'r2g1v': conference_matchups[0][0],
+        'r2g1h': conference_matchups[0][1],
+        'r2g2v': conference_matchups[1][0],
+        'r2g2h': conference_matchups[1][1],
+        'r2g1ko': kickoff(conference_matchups[0]),
+        'r2g2ko': kickoff(conference_matchups[1]),
+    })
+
+
+@login_required
 def view_picks(request):
     template_to_use = 'picks.html'
     try:
@@ -642,18 +667,18 @@ def view_picks(request):
         'pick_set': pick_set,
         'first_name': request.user.first_name,
         'last_name': request.user.last_name,
-        'r1g1v': current_matchups[0][0],
-        'r1g1h': current_matchups[0][1],
-        'r1g2v': current_matchups[1][0],
-        'r1g2h': current_matchups[1][1],
-        'r1g3v': current_matchups[2][0],
-        'r1g3h': current_matchups[2][1],
-        'r1g4v': current_matchups[3][0],
-        'r1g4h': current_matchups[3][1],
-        'r1g1ko': kickoff(current_matchups[0]),
-        'r1g2ko': kickoff(current_matchups[1]),
-        'r1g3ko': kickoff(current_matchups[2]),
-        'r1g4ko': kickoff(current_matchups[3]),
+        'r1g1v': divisional_matchups[0][0],
+        'r1g1h': divisional_matchups[0][1],
+        'r1g2v': divisional_matchups[1][0],
+        'r1g2h': divisional_matchups[1][1],
+        'r1g3v': divisional_matchups[2][0],
+        'r1g3h': divisional_matchups[2][1],
+        'r1g4v': divisional_matchups[3][0],
+        'r1g4h': divisional_matchups[3][1],
+        'r1g1ko': kickoff(divisional_matchups[0]),
+        'r1g2ko': kickoff(divisional_matchups[1]),
+        'r1g3ko': kickoff(divisional_matchups[2]),
+        'r1g4ko': kickoff(divisional_matchups[3]),
     })
 
 
