@@ -32,13 +32,13 @@ divisional_matchups = [
     ['Chargers', 'Patriots', datetime.datetime(2019, 1, 13, 12, 00), 'CBS'],
     ['Eagles', 'Saints', datetime.datetime(2019, 1, 13, 15, 35), 'FOX'],
 ]
-divisional_starts = [True, True, False, False]
+divisional_starts = [True, True, True, True]
 divisional_in_progress = [False, False, False, False]
-divisional_finished = [True, True, False, False]
+divisional_finished = [True, True, True, True]
 # divisional_starts = [True, True, True, True]
 # divisional_finished = [True, True, True, True]
 # divisional_result = [-19, -19, 5, 11]
-divisional_result = [18, 8, 5, 11]
+divisional_result = [18, 8, 13, 6]
 
 conference_matchups = [
     ['TBD', 'TBD', datetime.datetime(2019, 1, 20, 12, 00), 'CBS or FOX'],
@@ -187,14 +187,21 @@ def simple_get(url):
 
 
 def bjcp_quiz():
+    file = open('styleguide-2015.min.json')
+    content_string = file.read()
+    '''
     raw_html = simple_get('https://github.com/gthmb/bjcp-2015-json/blob/master/json/styleguide-2015.min.json')
     html = BeautifulSoup(raw_html, 'html.parser')
     content_string = html.decode_contents()
-    print(len(content_string))
+    start_location = content_string.find('{"styleguide')
+    end_location = content_string.find('</td>', start_location)
+    y = json.loads(content_string[start_location: end_location])
     '''
     y = json.loads(content_string)
-    print(y.keys())
-    '''
+    print(y['styleguide'].keys())
+    for category in y['styleguide']['class'][0]['category']:
+        print(f"{category['id']}. {category['name']}")
+    file.close()
 
 
 def update_request_time():
@@ -240,7 +247,8 @@ def scrape_nfl_dot_com_strip():
                         divisional_result[i] = delta
                     in_progress = status['isInProgress']
                     in_progress_overtime = status['isInProgressOvertime']
-                    if in_progress or in_progress_overtime:
+                    in_half = status['isHalf']
+                    if in_progress or in_progress_overtime or in_half:
                         home_score = game['homeTeam']['scores']['pointTotal']
                         away_score = game['awayTeam']['scores']['pointTotal']
                         delta = home_score - away_score
@@ -257,6 +265,7 @@ def nfl(request):
 
 
 def results(request, wc_as_1=False):
+    # bjcp_quiz()
     # migrate_picks()
     what_if = 0
     try:
