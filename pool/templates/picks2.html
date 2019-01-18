@@ -53,8 +53,12 @@
    </form>
 {% endif %}
   <br/>
-  <form method="GET" action="/picks/results_week2/">
-    <input type="submit" id="view_results" value="View Results"/>
+  <form method="GET" action="/picks/results/">
+    <input type="submit" id="view_results" value="View Latest Results"/>
+  </form>
+  <br/>
+  <form method="GET" action="/picks/results_week1/">
+    <input type="submit" id="view_results" value="View Week 1 Results"/>
   </form>
   <br/>
   <form method="GET" action="{% url 'logout' %}">
