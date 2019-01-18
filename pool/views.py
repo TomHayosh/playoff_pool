@@ -49,6 +49,14 @@ conference_in_progress = [False, False, False, False]
 conference_finished = [False, False]
 conference_result = [50, 50]
 
+sb_matchups = [
+    ['AFC', 'NFC', datetime.datetime(2019, 2, 3, 17, 00), 'FOX'],
+]
+sb_starts = [False]
+sb_in_progress = [False, False, False, False]
+sb_finished = [False]
+sb_result = [50]
+
 current_matchups = divisional_matchups
 
 current_pick_set_object = PickSet
@@ -607,12 +615,226 @@ def results_week2(request, wc_as_1=False):
     })
 
 
+def results_sb(request, wc_as_1=False):
+    # bjcp_quiz()
+    # migrate_picks()
+    what_if = 0
+    try:
+        what_if = int(request.GET.get('what_if'))
+    except (ValueError, KeyError, TypeError):
+        pass
+    update_starts()
+    try:
+        pick_set = current_pick_set_object.objects.get(
+            name=request.user.username
+        )
+        results_pref = pick_set.results_preference
+    except current_pick_set_object.DoesNotExist:
+        results_pref = 0
+
+    if wc_as_1:
+        # Diff from results
+        the_matchups = conference_matchups
+        started = conference_starts
+        finished = conference_finished
+        prev_matchups = divisional_matchups
+        prev_started = divisional_starts
+        prev_finished = divisional_finished
+        first_matchups = wild_card_matchups
+        first_started = wild_card_starts
+        first_finished = wild_card_finished
+    else:
+        the_matchups = sb_matchups
+        started = sb_starts
+        finished = sb_finished
+        prev_matchups = conference_matchups
+        prev_started = conference_starts
+        prev_finished = conference_finished
+        first_matchups = divisional_matchups
+        first_started = divisional_starts
+        first_finished = divisional_finished
+        # End diff from results
+    in_progress = [False, False, False, False]
+    data = [
+        [
+            '', 'Total score', 'Week 2 subtotal', 'Super Bowl score',
+            the_matchups[0][0] + ' at ' + the_matchups[0][1], '',
+        ]
+    ]
+    h_boilerplate = 4
+    data2 = [
+        [
+            '', 'Total score',
+            'Points behind', 'Super Bowl points behind',
+        ]
+    ]
+    row = ['Actual result']
+    row = pad_row(row, len(data[0]) - 1)
+    if wc_as_1:
+        first_result = wild_card_result
+        prev_result = divisional_result
+        result = conference_result
+    else:
+        first_result = divisional_result
+        prev_result = conference_result
+        result = sb_result
+    for i in range(num_games[2]):
+        column = 2 * i + h_boilerplate
+        if finished[i]:
+            if results_pref == 0:
+                if result[i] > 0:
+                    team = the_matchups[i][1]
+                else:
+                    team = the_matchups[i][0]
+                row[column] = team + ' by ' + str(abs(result[i]))
+            else:
+                row[column] = result[i]
+        elif started[i] and (i == 0 or finished[i - 1]) and what_if != 0:
+            if results_pref == 0:
+                if what_if > 0:
+                    team = the_matchups[i][1]
+                else:
+                    team = the_matchups[i][0]
+                row[column] = 'If ' + team + ' by ' + str(abs(what_if))
+            else:
+                row[column] = 'If ' + str(what_if)
+    data.append(row)
+
+    row = ['']
+    row = pad_row(row, len(data[0]) - 1)
+    data.append(row)
+    data2.append(row[:4])
+
+    boilerplate_len = len(data)
+
+    for pick in current_pick_set_object.objects.all():
+        if pick.round_1_game_1 == 1000:
+            continue
+        if wc_as_1:
+            teams = [
+                pick.round_2_game_1_team,
+            ]
+            margins = [
+                pick.round_2_game_1,
+            ]
+            prev_teams = [
+                pick.round_1_game_1_team,
+                pick.round_1_game_2_team,
+            ]
+            prev_margins = [
+                pick.round_1_game_1,
+                pick.round_1_game_2,
+            ]
+            first_teams = [
+                pick.wc_game_1_team,
+                pick.wc_game_2_team,
+                pick.wc_game_3_team,
+                pick.wc_game_4_team,
+            ]
+            first_margins = [
+                pick.wc_game_1,
+                pick.wc_game_2,
+                pick.wc_game_3,
+                pick.wc_game_4,
+            ]
+        else:
+            # FIXME: Update values below with Super Bowl picks
+            teams = [
+                pick.round_2_game_1_team,
+            ]
+            margins = [
+                pick.round_2_game_1,
+            ]
+            prev_teams = [
+                pick.round_2_game_1_team,
+                pick.round_2_game_2_team,
+            ]
+            prev_margins = [
+                pick.round_2_game_1,
+                pick.round_2_game_2,
+            ]
+            first_teams = [
+                pick.round_1_game_1_team,
+                pick.round_1_game_2_team,
+                pick.round_1_game_3_team,
+                pick.round_1_game_4_team,
+            ]
+            first_margins = [
+                pick.round_1_game_1,
+                pick.round_1_game_2,
+                pick.round_1_game_3,
+                pick.round_1_game_4,
+            ]
+        user = User.objects.get(username=pick.name)
+        row = [user.first_name + ' ' + user.last_name]
+        row = pad_row(row, len(data[0]) - 1)
+        total_col = 3
+        temp_row = ['']
+        temp_row = pad_row(temp_row, len(data[0]) - 1)
+        generate_results(
+            teams, margins, started, finished, what_if, h_boilerplate,
+            result, temp_row, total_col, results_pref, the_matchups,
+            num_games[2], in_progress
+        )
+        row[1:len(data[0])] = temp_row[1:len(data[0])]
+        temp_row = ['']
+        # FIXME - 11 because h_boilerplate is from week 2, not week 1
+        temp_row = pad_row(temp_row, 9)
+        total_col = 1
+        generate_results(
+            prev_teams, prev_margins, prev_started, prev_finished, what_if,
+            h_boilerplate, prev_result, temp_row, total_col, results_pref,
+            prev_matchups, num_games[1], in_progress
+        )
+        round_2_score = temp_row[total_col]
+        temp_row = ['']
+        # FIXME - 11 because h_boilerplate is from week 2, not week 1
+        temp_row = pad_row(temp_row, 11)
+        total_col = 1
+        generate_results(
+            first_teams, first_margins, first_started, first_finished, what_if,
+            h_boilerplate, first_result, temp_row, total_col, results_pref,
+            first_matchups, num_games[0], in_progress
+        )
+        row[2] = temp_row[total_col] + round_2_score
+        row[1] = row[2] + row[3]
+
+        pbrow = row[:4]
+        for i in range(boilerplate_len, len(data)):
+            if row[1] < data[i][1]:
+                data.insert(i, row)
+                data2.insert(i - 1, pbrow)
+                break
+        else:
+            data.append(row)
+            data2.append(pbrow)
+        for i in range(boilerplate_len - 1, len(data2)):
+            data2[i][2] = data2[i][1] - data2[2][1]
+            data2[i][3] = str(int(data2[i][2] / 4 + .75))
+            if (int(data2[i][2] / 4 + .75)) * 4 == data2[i][2]:
+                if data2[i][2] > 0:
+                    data2[i][3] += ' to tie'
+
+    return render(request, 'results.html', {
+        'playoff_week': 'Super Bowl',
+        'data': data, 'whatif': True, 'game_1_started': started[0],
+        # The game_3_started variable really should be show_what_if
+        'game_3_started': started[0] and not finished[num_games[1] - 1],
+        # 'game_3_started': False,
+        'data2': data2,
+    })
+
+
 def round2test1(request):
     return results(request, wc_as_1=True)
 
 
 def round2test2(request):
     return results_week2(request, wc_as_1=True)
+
+
+def sbtest(request):
+    return results_sb(request, wc_as_1=True)
 
 
 def profile(request):

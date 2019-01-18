@@ -29,5 +29,6 @@ urlpatterns = [
     path('alternate_view', views.alternate_view, name='alternate_view'),
     path('round2test1/', views.round2test1, name='round2test1'),
     path('round2test2/', views.round2test2, name='round2test2'),
+    path('sbtest/', views.sbtest, name='sbtest'),
     path('nfl/', views.nfl, name='nfl'),
 ]
