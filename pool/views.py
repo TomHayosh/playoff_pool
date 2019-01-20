@@ -577,6 +577,7 @@ def results_week2(request, wc_as_1=False):
             num_games[1], in_progress
         )
         row[1:len(data[0])] = temp_row[1:len(data[0])]
+        row[3] = 2 * row[3]
         temp_row = ['']
         # FIXME - 11 because h_boilerplate is from week 2, not week 1
         temp_row = pad_row(temp_row, 11)
