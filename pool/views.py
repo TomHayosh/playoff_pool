@@ -272,7 +272,7 @@ def scrape_nfl_dot_com_strip():
 
 def nfl(request):
     scrape_nfl_dot_com_strip()
-    return results(request)
+    return results_week2(request)
 
 
 def results(request, wc_as_1=False):
