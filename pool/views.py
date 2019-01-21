@@ -44,10 +44,10 @@ conference_matchups = [
     ['Rams', 'Saints', datetime.datetime(2019, 1, 20, 14, 00), 'FOX'],
     ['Patriots', 'Chiefs', datetime.datetime(2019, 1, 20, 17, 35), 'CBS'],
 ]
-conference_starts = [True, False]
+conference_starts = [True, True]
 conference_in_progress = [False, False, False, False]
-conference_finished = [True, False]
-conference_result = [-3, 50]
+conference_finished = [True, True]
+conference_result = [-3, -6]
 
 sb_matchups = [
     ['AFC', 'NFC', datetime.datetime(2019, 2, 3, 17, 00), 'FOX'],
