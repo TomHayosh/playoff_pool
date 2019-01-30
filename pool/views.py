@@ -53,9 +53,9 @@ conference_result = [-3, -6]
 sb_matchups = [
     ['Patriots', 'Rams', datetime.datetime(2019, 2, 3, 17, 30), 'CBS'],
 ]
-sb_starts = [True]
+sb_starts = [False]
 sb_in_progress = [False, False, False, False]
-sb_finished = [True]
+sb_finished = [False]
 sb_result = [50]
 
 current_matchups = divisional_matchups
@@ -966,6 +966,30 @@ def home_page(request):
     update_starts()
     return render(request, 'home.html', {
         'game_1_started': divisional_starts[0]
+    })
+
+
+@login_required
+def view_picks3(request):
+    template_to_use = 'picks3.html'
+    try:
+        pick_set = current_pick_set_object.objects.get(
+            name=request.user.username
+        )
+    except current_pick_set_object.DoesNotExist:
+        pick_set = current_pick_set_object.objects.create(
+            name=request.user.username,
+        )
+    if request.user.username != pick_set.name:
+        return render(request, 'signup.html', {'form': SignUpForm()})
+    return render(request, template_to_use, {
+        'pick_set': pick_set,
+        'first_name': request.user.first_name,
+        'last_name': request.user.last_name,
+        'r2g1v': sb_matchups[0][0],
+        'r2g1h': sb_matchups[0][1],
+        'r2g1ko': kickoff(sb_matchups[0]),
+        'game_1_open': not sb_starts[0],
     })
 
 
