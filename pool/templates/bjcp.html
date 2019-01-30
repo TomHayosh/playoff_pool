@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block header_text %}BJCP 2015{% endblock %}
+
+{% block pagebody %}
+<style>
+.stat { visibility: hidden; }
+</style>
+<script>
+  function show_element_by_id(id) {
+    document.getElementById(id).style.visibility = "visible";
+  }
+  function show_all() {
+    document.getElementById("og").style.visibility = "visible";
+    document.getElementById("ibu").style.visibility = "visible";
+    document.getElementById("abv").style.visibility = "visible";
+    document.getElementById("srm").style.visibility = "visible";
+  }
+</script>
+  {{ subcat_id }}. {{ subcat_name }}
+  <br/>
+  OG:
+  <span id="og" class="og stat">
+    {{ og_low }}-{{ og_high }}
+  </span>
+  <button onclick="show_element_by_id('og')">Show</button>
+  <br/>
+  IBU:
+  <span id="ibu" class="ibu stat">
+    {{ ibu_low }}-{{ ibu_high }}
+  </span>
+  <button onclick="show_element_by_id('ibu')">Show</button>
+  <br/>
+  ABV:
+  <span id="abv" class="abv stat">
+    {{ abv_low }}-{{ abv_high }}
+  </span>
+  <button onclick="show_element_by_id('abv')">Show</button>
+  <br/>
+  SRM:
+  <span id="srm" class="srm stat">
+    {{ srm_low }}-{{ srm_high }}
+  </span>
+  <button onclick="show_element_by_id('srm')">Show</button>
+  <br/>
+  <button onclick="show_all()">Show all</button>
+  <br/>
+  <br/>
+  <br/>
+  <br/>
+  Overlaps OG, IBU, and SRM with:
+  <table id="week_1_table" cellpadding="4">
+    {% for row in data %}
+    <tr>
+      {% for cell in row %}
+      <td{% if forloop.counter > 1 %} align="center"{% endif %}>{{ cell }}</td>
+      {% endfor %}
+    </tr>
+    {% endfor %}
+  </table>
+
+{% endblock %}

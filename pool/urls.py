@@ -31,4 +31,5 @@ urlpatterns = [
     path('round2test2/', views.round2test2, name='round2test2'),
     path('sbtest/', views.sbtest, name='sbtest'),
     path('nfl/', views.nfl, name='nfl'),
+    path('bjcp/', views.bjcp, name='bjcp'),
 ]

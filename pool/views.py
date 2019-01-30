@@ -10,6 +10,7 @@ from contextlib import closing
 from bs4 import BeautifulSoup
 import json
 import time
+import random
 
 num_games = (4, 2, 1)
 last_nfl_request = [time.time() - 180]
@@ -197,7 +198,7 @@ def simple_get(url):
         return None
 
 
-def bjcp_quiz():
+def load_bjcp_json():
     file = open('styleguide-2015.min.json')
     content_string = file.read()
     '''
@@ -208,11 +209,123 @@ def bjcp_quiz():
     end_location = content_string.find('</td>', start_location)
     y = json.loads(content_string[start_location: end_location])
     '''
-    y = json.loads(content_string)
-    print(y['styleguide'].keys())
-    for category in y['styleguide']['class'][0]['category']:
-        print(f"{category['id']}. {category['name']}")
+    bjcp_json = json.loads(content_string)
     file.close()
+    return bjcp_json
+
+
+def bjcp_all(request):
+    bjcp_json = load_bjcp_json()
+    text_from_page = ''
+    test_subcats = []
+    for category in bjcp_json['styleguide']['class'][0]['category']:
+        if int(category['id']) > 26:
+            continue
+        for subcat in category['subcategory']:
+            # elif category['name'] == 'American IPA':
+            if '21B' not in subcat['id'] and subcat['id'] != '7C':
+                test_subcats.append(subcat)
+    # for subcat in test_subcats:
+    subcat = random.choice(test_subcats)
+    og = subcat['stats']['og']
+    data = []
+    row = [
+        '', 'BJCP ID', 'Name', 'OG Low', 'OG High', 'FG Low', 'FG High',
+        'IBU Low', 'IBU High', 'SRM Low', 'SRM High', 'ABV Low', 'ABV High'
+    ]
+    data.append(row)
+    subcat_index = 1
+    for category in bjcp_json['styleguide']['class'][0]['category']:
+        if int(category['id']) > 26:
+            continue
+        for subcat2 in category['subcategory']:
+            # if category['name'] == 'American IPA':
+            if '21B' not in subcat2['id'] and subcat2['id'] != '7C':
+                row = [subcat_index, subcat2['id'], subcat2['name']]
+                subcat_index += 1
+                stat = subcat['stats']
+                for key in subcat2['stats']:
+                    row.append(subcat2['stats'][key]['low'])
+                    row.append(subcat2['stats'][key]['high'])
+                data.append(row)
+    return render(request, 'bjcp.html', {
+        'subcat_id': subcat['id'],
+        'subcat_name': subcat['name'],
+        'og_high': subcat['stats']['og']['high'],
+        'og_low': subcat['stats']['og']['low'],
+        'ibu_high': subcat['stats']['ibu']['high'],
+        'ibu_low': subcat['stats']['ibu']['low'],
+        'abv_high': subcat['stats']['abv']['high'],
+        'abv_low': subcat['stats']['abv']['low'],
+        'srm_high': subcat['stats']['srm']['high'],
+        'srm_low': subcat['stats']['srm']['low'],
+        'data': data,
+    })
+
+
+def bjcp(request):
+    # def bjcp_comparables(request):
+    bjcp_json = load_bjcp_json()
+    text_from_page = ''
+    test_subcats = []
+    for category in bjcp_json['styleguide']['class'][0]['category']:
+        if int(category['id']) > 26:
+            continue
+        for subcat in category['subcategory']:
+            # elif category['name'] == 'American IPA':
+            if '21B' not in subcat['id'] and subcat['id'] != '7C':
+                test_subcats.append(subcat)
+    # for subcat in test_subcats:
+    subcat = None
+    try:
+        subcat_id = request.GET.get('subcat')
+        for item in test_subcats:
+            if item['id'] == subcat_id:
+                subcat = item
+                break
+    except (ValueError, KeyError, TypeError):
+        pass
+    if subcat is None:
+        subcat = random.choice(test_subcats)
+    og = subcat['stats']['og']
+    data = []
+    for category in bjcp_json['styleguide']['class'][0]['category']:
+        if int(category['id']) > 26:
+            continue
+        for subcat2 in category['subcategory']:
+            # if category['name'] == 'American IPA':
+            if '21B' not in subcat2['id'] and subcat2['id'] != '7C':
+                overlaps = 0
+                row = [subcat2['id'], subcat2['name']]
+                stat = subcat['stats']
+                for key in subcat2['stats']:
+                    value_high = float(subcat2['stats'][key]['high'])
+                    value_low = float(subcat2['stats'][key]['low'])
+                    high = float(stat[key]['high'])
+                    low = float(stat[key]['low'])
+                    row.append(subcat2['stats'][key]['low'])
+                    row.append(subcat2['stats'][key]['high'])
+                    if (value_low >= low and value_low < high or
+                            value_high > low and value_high <= high or
+                            value_low <= low and value_high >= high or
+                            value_low >= low and value_high <= high):
+                        if key in ('og', 'ibu', 'srm'):
+                            overlaps += 1
+                if (overlaps == 3):
+                    data.append(row)
+    return render(request, 'bjcp.html', {
+        'subcat_id': subcat['id'],
+        'subcat_name': subcat['name'],
+        'og_high': subcat['stats']['og']['high'],
+        'og_low': subcat['stats']['og']['low'],
+        'ibu_high': subcat['stats']['ibu']['high'],
+        'ibu_low': subcat['stats']['ibu']['low'],
+        'abv_high': subcat['stats']['abv']['high'],
+        'abv_low': subcat['stats']['abv']['low'],
+        'srm_high': subcat['stats']['srm']['high'],
+        'srm_low': subcat['stats']['srm']['low'],
+        'data': data,
+    })
 
 
 def update_request_time():
@@ -244,30 +357,36 @@ def scrape_nfl_dot_com_strip():
     y = json.loads(content_string[json_start: json_end - 1])
     # print(json.dumps(y))
     for game in y['uiState']['scoreStripGames']:
-        for i in range(4):
-            if game['awayTeam']['identifier'] == divisional_matchups[i][0]:
+        for i in range(2):
+            print(f"{game['awayTeam']['identifier']}")
+            print(f"{conference_matchups[i][0]}")
+            if game['awayTeam']['identifier'] == conference_matchups[i][0]:
                 status = game['status']
                 if not status['isUpcoming']:
+                    print('Not upcoming')
                     if status['phaseDescription'] == 'FINAL':
-                        # print(f"{game['awayTeam']['identifier']} finished")
-                        divisional_finished[i] = True
+                        print(f"{game['awayTeam']['identifier']} finished")
+                        conference_finished[i] = True
                         home_score = game['homeTeam']['scores']['pointTotal']
                         away_score = game['awayTeam']['scores']['pointTotal']
                         delta = home_score - away_score
                         # print(f'Delta is {delta}')
-                        divisional_result[i] = delta
+                        conference_result[i] = delta
                     in_progress = status['isInProgress']
+                    print(in_progress)
                     in_progress_overtime = status['isInProgressOvertime']
+                    print(in_progress_overtime)
                     in_half = status['isHalf']
+                    print(in_half)
                     if in_progress or in_progress_overtime or in_half:
                         home_score = game['homeTeam']['scores']['pointTotal']
                         away_score = game['awayTeam']['scores']['pointTotal']
                         delta = home_score - away_score
                         # print(f'Delta is {delta}')
-                        divisional_result[i] = delta
-                        divisional_in_progress[i] = True
-                    else:
-                        divisional_in_progress[i] = False
+                        conference_result[i] = delta
+                        conference_in_progress[i] = True
+                    # else:
+                    #     conference_in_progress[i] = False
 
 
 def nfl(request):
