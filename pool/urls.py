@@ -26,6 +26,7 @@ urlpatterns = [
     path('edit/', views.edit_picks, name='edit_picks'),
     path('results_week1/', views.results, name='results'),
     path('results/', views.results_week2, name='results_week2'),
+    path('results_sb/', views.results_sb, name='results_sb'),
     path('alternate_view', views.alternate_view, name='alternate_view'),
     path('round2test1/', views.round2test1, name='round2test1'),
     path('round2test2/', views.round2test2, name='round2test2'),

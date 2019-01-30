@@ -51,11 +51,11 @@ conference_finished = [True, True]
 conference_result = [-3, -6]
 
 sb_matchups = [
-    ['AFC', 'NFC', datetime.datetime(2019, 2, 3, 17, 00), 'FOX'],
+    ['Patriots', 'Rams', datetime.datetime(2019, 2, 3, 17, 30), 'CBS'],
 ]
-sb_starts = [False]
+sb_starts = [True]
 sb_in_progress = [False, False, False, False]
-sb_finished = [False]
+sb_finished = [True]
 sb_result = [50]
 
 current_matchups = divisional_matchups
@@ -860,10 +860,10 @@ def results_sb(request, wc_as_1=False):
         else:
             # FIXME: Update values below with Super Bowl picks
             teams = [
-                pick.round_2_game_1_team,
+                pick.super_bowl_team,
             ]
             margins = [
-                pick.round_2_game_1,
+                pick.super_bowl_pick,
             ]
             prev_teams = [
                 pick.round_2_game_1_team,
@@ -939,7 +939,7 @@ def results_sb(request, wc_as_1=False):
         'playoff_week': 'Super Bowl',
         'data': data, 'whatif': True, 'game_1_started': started[0],
         # The game_3_started variable really should be show_what_if
-        'game_3_started': started[0] and not finished[num_games[1] - 1],
+        'game_3_started': started[0] and not finished[num_games[2] - 1],
         # 'game_3_started': False,
         'data2': data2,
     })

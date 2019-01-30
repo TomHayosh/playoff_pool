@@ -25,3 +25,5 @@ class PickSet(models.Model):
     round_2_game_1 = models.IntegerField(default=4)
     round_2_game_2_team = models.IntegerField(default=1)
     round_2_game_2 = models.IntegerField(default=3)
+    super_bowl_team = models.IntegerField(default=0)
+    super_bowl_pick = models.IntegerField(default=3)
