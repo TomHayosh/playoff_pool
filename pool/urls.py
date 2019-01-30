@@ -18,7 +18,7 @@ from pool import views
 
 urlpatterns = [
     path('new', views.new_picks, name='new_picks'),
-    path('', views.view_picks2, name='view_picks2'),
+    path('', views.view_picks3, name='view_picks3'),
     path('week1/', views.view_picks, name='view_picks'),
     path('week2/', views.view_picks2, name='view_picks2'),
     path('sb_pick/', views.view_picks3, name='view_picks3'),

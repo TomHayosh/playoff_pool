@@ -82,6 +82,9 @@ def update_starts():
     for i in range(num_games[1]):
         if datetime.datetime.now() > conference_matchups[i][2]:
             conference_starts[i] = True
+    for i in range(num_games[2]):
+        if datetime.datetime.now() > sb_matchups[i][2]:
+            sb_starts[i] = True
 
 
 @login_required
