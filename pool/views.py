@@ -1103,6 +1103,24 @@ def edit_picks(request):
 
 
 @login_required
+def update_picks3(request):
+    pick_set = current_pick_set_object.objects.get(name=request.user.username)
+    started = sb_starts
+    # FIXME: Test the started conditionals!!!
+    if not started[0]:
+        try:
+            pick_set.super_bowl_team = int(request.POST['game_1_team'])
+        except (KeyError, ValueError):
+            pass
+        try:
+            pick_set.super_bowl_pick = int(request.POST['game_1_pick'])
+        except (KeyError, ValueError):
+            pass
+    pick_set.save()
+    return redirect(f'/picks/sb_pick/')
+
+
+@login_required
 def update_picks2(request):
     pick_set = current_pick_set_object.objects.get(name=request.user.username)
     started = conference_starts
