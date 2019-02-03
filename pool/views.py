@@ -360,41 +360,43 @@ def scrape_nfl_dot_com_strip():
     y = json.loads(content_string[json_start: json_end - 1])
     # print(json.dumps(y))
     for game in y['uiState']['scoreStripGames']:
-        for i in range(2):
-            print(f"{game['awayTeam']['identifier']}")
-            print(f"{conference_matchups[i][0]}")
-            if game['awayTeam']['identifier'] == conference_matchups[i][0]:
+        # FIXME: range length must not be hard coded
+        for i in range(1):
+            # print(f"{game['awayTeam']['identifier']}")
+            # print(f"{conference_matchups[i][0]}")
+            if game['awayTeam']['identifier'] == sb_matchups[i][0]:
                 status = game['status']
+                # print(status)
                 if not status['isUpcoming']:
-                    print('Not upcoming')
+                    # print('Not upcoming')
                     if status['phaseDescription'] == 'FINAL':
                         print(f"{game['awayTeam']['identifier']} finished")
-                        conference_finished[i] = True
+                        sb_finished[i] = True
                         home_score = game['homeTeam']['scores']['pointTotal']
                         away_score = game['awayTeam']['scores']['pointTotal']
                         delta = home_score - away_score
                         # print(f'Delta is {delta}')
-                        conference_result[i] = delta
+                        sb_result[i] = delta
                     in_progress = status['isInProgress']
-                    print(in_progress)
+                    # print(in_progress)
                     in_progress_overtime = status['isInProgressOvertime']
-                    print(in_progress_overtime)
+                    # print(in_progress_overtime)
                     in_half = status['isHalf']
-                    print(in_half)
+                    # print(in_half)
                     if in_progress or in_progress_overtime or in_half:
                         home_score = game['homeTeam']['scores']['pointTotal']
                         away_score = game['awayTeam']['scores']['pointTotal']
                         delta = home_score - away_score
                         # print(f'Delta is {delta}')
-                        conference_result[i] = delta
-                        conference_in_progress[i] = True
+                        sb_result[i] = delta
+                        sb_in_progress[i] = True
                     # else:
-                    #     conference_in_progress[i] = False
+                    #     sb_in_progress[i] = False
 
 
 def nfl(request):
     scrape_nfl_dot_com_strip()
-    return results_week2(request)
+    return results_sb(request)
 
 
 def results(request, wc_as_1=False):
@@ -578,6 +580,7 @@ def results_week2(request, wc_as_1=False):
         the_matchups = divisional_matchups
         started = divisional_starts
         finished = divisional_finished
+        in_progress = divisional_in_progress
         prev_matchups = wild_card_matchups
         prev_started = wild_card_starts
         prev_finished = wild_card_finished
@@ -585,11 +588,11 @@ def results_week2(request, wc_as_1=False):
         the_matchups = conference_matchups
         started = conference_starts
         finished = conference_finished
+        in_progress = conference_in_progress
         prev_matchups = divisional_matchups
         prev_started = divisional_starts
         prev_finished = divisional_finished
         # End diff from results
-    in_progress = [False, False, False, False]
     data = [
         [
             '', 'Total score', 'Week 1 subtotal', 'Week 2 score',
@@ -632,6 +635,19 @@ def results_week2(request, wc_as_1=False):
                 row[column] = 'If ' + team + ' by ' + str(abs(what_if))
             else:
                 row[column] = 'If ' + str(what_if)
+        elif not wc_as_1 and in_progress[i]:
+            if results_pref == 0:
+                if result[i] > 0:
+                    team = the_matchups[i][1]
+                else:
+                    team = the_matchups[i][0]
+                row[column] = "In progress: "
+                if result[i] == 0:
+                    row[column] += 'Tied'
+                else:
+                    row[column] += team + ' by ' + str(abs(result[i]))
+            else:
+                row[column] = "In progress: " + str(result[i])
     data.append(row)
 
     row = ['']
@@ -760,6 +776,7 @@ def results_sb(request, wc_as_1=False):
         the_matchups = conference_matchups
         started = conference_starts
         finished = conference_finished
+        in_progress = conference_in_progress
         prev_matchups = divisional_matchups
         prev_started = divisional_starts
         prev_finished = divisional_finished
@@ -770,6 +787,7 @@ def results_sb(request, wc_as_1=False):
         the_matchups = sb_matchups
         started = sb_starts
         finished = sb_finished
+        in_progress = sb_in_progress
         prev_matchups = conference_matchups
         prev_started = conference_starts
         prev_finished = conference_finished
@@ -777,7 +795,6 @@ def results_sb(request, wc_as_1=False):
         first_started = divisional_starts
         first_finished = divisional_finished
         # End diff from results
-    in_progress = [False, False, False, False]
     data = [
         [
             '', 'Total score', 'Subtotal after Week 2', 'Super Bowl score',
@@ -822,6 +839,19 @@ def results_sb(request, wc_as_1=False):
                 row[column] = 'If ' + team + ' by ' + str(abs(what_if))
             else:
                 row[column] = 'If ' + str(what_if)
+        elif not wc_as_1 and in_progress[i]:
+            if results_pref == 0:
+                if result[i] > 0:
+                    team = the_matchups[i][1]
+                else:
+                    team = the_matchups[i][0]
+                row[column] = "In progress: "
+                if result[i] == 0:
+                    row[column] += 'Tied'
+                else:
+                    row[column] += team + ' by ' + str(abs(result[i]))
+            else:
+                row[column] = "In progress: " + str(result[i])
     data.append(row)
 
     row = ['']
