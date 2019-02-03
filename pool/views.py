@@ -780,8 +780,9 @@ def results_sb(request, wc_as_1=False):
     in_progress = [False, False, False, False]
     data = [
         [
-            '', 'Total score', 'Week 2 subtotal', 'Super Bowl score',
-            the_matchups[0][0] + ' at ' + the_matchups[0][1], '',
+            '', 'Total score', 'Subtotal after Week 2', 'Super Bowl score',
+            the_matchups[0][0] + ' at ' + the_matchups[0][1],
+            'Super Bowl difference',
         ]
     ]
     h_boilerplate = 4
@@ -919,7 +920,8 @@ def results_sb(request, wc_as_1=False):
             h_boilerplate, first_result, temp_row, total_col, results_pref,
             first_matchups, num_games[0], in_progress
         )
-        row[2] = temp_row[total_col] + round_2_score
+        row[2] = temp_row[total_col] + round_2_score * 2
+        row[3] = row[3] * 4
         row[1] = row[2] + row[3]
 
         pbrow = row[:4]
