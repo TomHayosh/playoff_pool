@@ -53,10 +53,10 @@ conference_result = [-3, -6]
 sb_matchups = [
     ['Patriots', 'Rams', datetime.datetime(2019, 2, 3, 17, 30), 'CBS'],
 ]
-sb_starts = [False]
+sb_starts = [True]
 sb_in_progress = [False, False, False, False]
-sb_finished = [False]
-sb_result = [50]
+sb_finished = [True]
+sb_result = [-10]
 
 current_matchups = divisional_matchups
 
