@@ -202,19 +202,23 @@ def simple_get(url):
 
 
 def load_bjcp_json():
-    file = open('styleguide-2015.min.json')
-    content_string = file.read()
-    '''
-    raw_html = simple_get('https://github.com/gthmb/bjcp-2015-json/blob/master/json/styleguide-2015.min.json')
-    html = BeautifulSoup(raw_html, 'html.parser')
-    content_string = html.decode_contents()
-    start_location = content_string.find('{"styleguide')
-    end_location = content_string.find('</td>', start_location)
-    y = json.loads(content_string[start_location: end_location])
-    '''
-    bjcp_json = json.loads(content_string)
-    file.close()
-    return bjcp_json
+    try:
+        file = open('styleguide-2015.min.json')
+        content_string = file.read()
+        bjcp_json = json.loads(content_string)
+        file.close()
+        return bjcp_json
+    except FileNotFoundError:
+        file = open('testfile.txt', 'w')
+        file.write('Hello')
+        file.close()
+        raw_html = simple_get('https://github.com/gthmb/bjcp-2015-json/blob/master/json/styleguide-2015.min.json')
+        html = BeautifulSoup(raw_html, 'html.parser')
+        content_string = html.decode_contents()
+        start_location = content_string.find('{"styleguide')
+        end_location = content_string.find('</td>', start_location)
+        y = json.loads(content_string[start_location: end_location])
+        return y
 
 
 def bjcp_all(request):
