@@ -296,6 +296,9 @@ def bjcp(request):
         subcat = random.choice(test_subcats)
     og = subcat['stats']['og']
     data = []
+    row = ['', '', 'OG L', 'OG H', 'FG L', 'FG H', 'IBU L', 'IBU H', 'SRM L',
+        'SRM H', 'ABV L', 'ABV H']
+    data.append(row)
     for category in bjcp_json['styleguide']['class'][0]['category']:
         if int(category['id']) > 26:
             continue
