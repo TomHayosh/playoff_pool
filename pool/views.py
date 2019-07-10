@@ -21,41 +21,41 @@ wild_card_matchups = [
     ['Chargers', 'Ravens', datetime.datetime(2019, 1, 6, 12, 00), 'CBS'],
     ['Eagles', 'Bears', datetime.datetime(2019, 1, 6, 15, 30), 'ESPN'],
 ]
-wild_card_starts = [True, True, True, True]
+wild_card_starts = [False, False, False, False]
 wild_card_in_progress = [False, False, False, False]
-wild_card_finished = [True, True, True, True]
+wild_card_finished = [False, False, False, False]
 wild_card_result = [-14, 2, -6, -1]
 
 
 divisional_matchups = [
-    ['Colts', 'Chiefs', datetime.datetime(2019, 1, 12, 15, 30), 'NBC'],
-    ['Cowboys', 'Rams', datetime.datetime(2019, 1, 12, 19, 10), 'FOX'],
-    ['Chargers', 'Patriots', datetime.datetime(2019, 1, 13, 12, 00), 'CBS'],
-    ['Eagles', 'Saints', datetime.datetime(2019, 1, 13, 15, 35), 'FOX'],
+    ['Colts', 'Chiefs', datetime.datetime(2020, 1, 12, 15, 30), 'NBC'],
+    ['Cowboys', 'Rams', datetime.datetime(2020, 1, 12, 19, 10), 'FOX'],
+    ['Chargers', 'Patriots', datetime.datetime(2020, 1, 13, 12, 00), 'CBS'],
+    ['Eagles', 'Saints', datetime.datetime(2020, 1, 13, 15, 35), 'FOX'],
 ]
-divisional_starts = [True, True, True, True]
+divisional_starts = [False, False, False, False]
 divisional_in_progress = [False, False, False, False]
-divisional_finished = [True, True, True, True]
+divisional_finished = [False, False, False, False]
 # divisional_starts = [True, True, True, True]
 # divisional_finished = [True, True, True, True]
 # divisional_result = [-19, -19, 5, 11]
 divisional_result = [18, 8, 13, 6]
 
 conference_matchups = [
-    ['Rams', 'Saints', datetime.datetime(2019, 1, 20, 14, 00), 'FOX'],
-    ['Patriots', 'Chiefs', datetime.datetime(2019, 1, 20, 17, 35), 'CBS'],
+    ['Rams', 'Saints', datetime.datetime(2020, 1, 20, 14, 00), 'FOX'],
+    ['Patriots', 'Chiefs', datetime.datetime(2020, 1, 20, 17, 35), 'CBS'],
 ]
-conference_starts = [True, True]
+conference_starts = [False, False]
 conference_in_progress = [False, False, False, False]
-conference_finished = [True, True]
+conference_finished = [False, False]
 conference_result = [-3, -6]
 
 sb_matchups = [
-    ['Patriots', 'Rams', datetime.datetime(2019, 2, 3, 17, 30), 'CBS'],
+    ['Patriots', 'Rams', datetime.datetime(2020, 2, 3, 17, 30), 'CBS'],
 ]
-sb_starts = [True]
+sb_starts = [False]
 sb_in_progress = [False, False, False, False]
-sb_finished = [True]
+sb_finished = [False]
 sb_result = [-10]
 
 current_matchups = divisional_matchups
