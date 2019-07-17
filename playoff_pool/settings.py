@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_registration',
     'pool',
 ]
 
@@ -122,3 +123,10 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 
 LOGOUT_REDIRECT_URL = '/'
+
+ACCOUNT_ACTIVATION_DAYS = 7
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'thayosh@gmail.com'
+EMAIL_USE_TLS = True
