@@ -1,2 +1,12 @@
-The body!!!
+activation_key = {{ activation_key }}
+expiration_days = {{ expiration_days }}
+request = {{ request }}
+scheme = {{ scheme }}
+site = {{ site }}
+user = {{ user }}
+
+Hello {{ user }}, please click the link below to activate your account.
+{{ scheme }}://{{ site }}/accounts/activate/{{ activation_key }}
+
+This activation key will expire in {{ expiration_days }}.
 
