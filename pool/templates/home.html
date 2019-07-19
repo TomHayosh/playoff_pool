@@ -18,7 +18,7 @@
 
 {% if user.is_authenticated %}
 {% else %}
-    <form method="GET" action="signup/">
+    <form method="GET" action="accounts/register/">
       <input type="submit" id="signup" value="Click here to sign up"/>
     </form>
 {% endif %}

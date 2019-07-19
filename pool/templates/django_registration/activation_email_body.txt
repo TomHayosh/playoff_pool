@@ -1,12 +1,6 @@
-activation_key = {{ activation_key }}
-expiration_days = {{ expiration_days }}
-request = {{ request }}
-scheme = {{ scheme }}
-site = {{ site }}
-user = {{ user }}
-
 Hello {{ user }}, please click the link below to activate your account.
 {{ scheme }}://{{ site }}/accounts/activate/{{ activation_key }}
 
-This activation key will expire in {{ expiration_days }}.
+The resulting page will allow you to enter your name and log in to create a pick set.
 
+This activation key will expire in {{ expiration_days }} days.

@@ -1065,6 +1065,11 @@ def view_picks2(request):
 
 @login_required
 def view_picks(request):
+    started = divisional_starts
+    if request.user.first_name == '':
+        return render(request, 'get_name.html', {
+            'game_1_open': not started[0],
+    })
     template_to_use = 'picks.html'
     try:
         pick_set = current_pick_set_object.objects.get(
@@ -1232,3 +1237,25 @@ def update_picks(request):
             pass
     pick_set.save()
     return redirect(f'/picks/')
+
+
+@login_required
+def set_name(request):
+	# https://wsvincent.com/django-user-authentication-tutorial-login-and-logout/
+    started = divisional_starts
+    # FIXME: Test the started conditionals!!!
+    if not started[0]:
+        user = request.user
+        user.first_name = request.POST['first']
+        user.last_name = request.POST['last']
+        user.save()
+        pick_set = current_pick_set_object.objects.create(
+            name=user.username,
+            round_1_game_1=6,  # 1,
+            round_1_game_2=5,  # 2,
+            round_1_game_3=5,  # 3,
+            round_1_game_4=11,  # 6,
+        )
+        return redirect('/picks/edit')
+    else:
+        return home_page(request)
